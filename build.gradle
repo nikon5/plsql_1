@@ -1,0 +1,24 @@
+apply plugin: 'java'
+apply plugin: 'idea'
+
+def langLevel = 1.8
+
+sourceCompatibility = langLevel
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.springframework:spring-context:4.1.5.RELEASE'
+    compile 'org.springframework.data:spring-data-oracle:1.1.0.RELEASE'
+    compile files('./lib/ojdbc6.jar')
+
+    testCompile 'junit:junit:4.12'
+}
+
+test {
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+}
