@@ -15,7 +15,8 @@
         <TextArea fx:id="countText" layoutX="215.0" layoutY="30.0" prefHeight="115.0" prefWidth="375.0"/>
         <Button layoutX="220.0" layoutY="333.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0"
                 text="Save to file"/>
-        <TextArea layoutX="215.0" layoutY="179.0" prefHeight="146.0" prefWidth="385.0"/>
+        <TableView fx:id="descTable" layoutX="215.0" layoutY="174.0" prefHeight="155.0" prefWidth="376.0">
+        </TableView>
         <Label layoutX="211.0" layoutY="14.0" text="Count"/>
         <Label layoutX="215.0" layoutY="157.0" text="Desc"/>
     </children>

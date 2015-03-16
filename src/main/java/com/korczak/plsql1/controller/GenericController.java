@@ -11,6 +11,7 @@ public class GenericController {
     protected final ApplicationContext applicationContext;
 
     public GenericController() {
+
         applicationContext = new AnnotationConfigApplicationContext(DatabaseConfiguration.class, ControllersConfiguration.class);
     }
 }
