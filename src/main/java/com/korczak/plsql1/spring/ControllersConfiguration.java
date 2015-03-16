@@ -1,6 +1,7 @@
 package com.korczak.plsql1.spring;
 
 import com.korczak.plsql1.TableCount;
+import com.korczak.plsql1.TableDesc;
 import com.korczak.plsql1.TablesNames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -23,6 +24,11 @@ public class ControllersConfiguration {
     @Bean
     public TablesNames getTablesNames() throws SQLException {
         return new TablesNames(dataSource);
+    }
+
+    @Bean
+    public TableDesc getTablesDescription() throws SQLException {
+        return new TableDesc(dataSource);
     }
 
 }

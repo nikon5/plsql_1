@@ -21,7 +21,7 @@ public class TablesNames extends StoredProcedure {
 
     public String execute(){
         Map<String, String> inputParams = new HashMap();
-
+        inputParams.put("tables_names", "aa");
         Map<String, Object> outputParams = execute(inputParams);
         if(!outputParams.isEmpty()) {
             Object tables_names = outputParams.get("tables_names");

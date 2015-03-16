@@ -9,10 +9,10 @@
       minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0"
       xmlns="http://javafx.com/javafx/8 " xmlns:fx="http://javafx.com/fxml/1">
     <children>
-        <ListView fx:id="listOfTablesNames" layoutX="7.0" layoutY="6.0" prefHeight="319.0" prefWidth="200.0"/>
+        <ListView fx:id="listOfTablesNames" onMouseClicked="#handleMouseClick" layoutX="7.0" layoutY="6.0" prefHeight="319.0" prefWidth="200.0"/>
         <Button fx:id="myButton" onAction="#onCountriesAction" layoutX="6.0" layoutY="333.0" mnemonicParsing="false"
                 prefHeight="25.0" prefWidth="200.0" text="Get names"/>
-        <TextArea layoutX="215.0" layoutY="30.0" prefHeight="115.0" prefWidth="375.0"/>
+        <TextArea fx:id="countText" layoutX="215.0" layoutY="30.0" prefHeight="115.0" prefWidth="375.0"/>
         <Button layoutX="220.0" layoutY="333.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0"
                 text="Save to file"/>
         <TextArea layoutX="215.0" layoutY="179.0" prefHeight="146.0" prefWidth="385.0"/>
