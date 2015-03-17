@@ -65,9 +65,9 @@ public class ButtonController extends GenericController {
             typeCol.setCellValueFactory(
                     new PropertyValueFactory<>("type")
             );
-            nameCol.setPrefWidth(125);
-            nullCol.setPrefWidth(125);
-            typeCol.setPrefWidth(125);
+            nameCol.setPrefWidth(124);
+            nullCol.setPrefWidth(124);
+            typeCol.setPrefWidth(124);
             ObservableList<Desc> data = FXCollections.observableArrayList();
             String[] row = tableDesc.split(",");
             for (int i = 0; i < row.length; i++) {
