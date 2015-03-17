@@ -1,4 +1,4 @@
-package com.korczak.plsql1;
+package com.korczak.plsql1.storedprocedures;
 
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
@@ -12,10 +12,10 @@ import java.util.Map;
 
 public class TableCount extends StoredProcedure {
 
-    private static final String SQL = "hr.table_row_count";
+    private static final String TABLE_COUNT_FUNCTION = "hr.table_row_count";
 
     public TableCount(DataSource dataSource) {
-        super(dataSource, SQL);
+        super(dataSource, TABLE_COUNT_FUNCTION);
         declareParameter(new SqlOutParameter("table_count", Types.NUMERIC));
         declareParameter(new SqlParameter("table_name", Types.VARCHAR));
         setFunction(true);//you must set this as it distinguishes it from a sproc

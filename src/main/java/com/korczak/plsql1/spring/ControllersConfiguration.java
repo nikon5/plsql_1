@@ -1,9 +1,9 @@
 package com.korczak.plsql1.spring;
 
-import com.korczak.plsql1.TableCount;
-import com.korczak.plsql1.TableDesc;
-import com.korczak.plsql1.TableDescSave;
-import com.korczak.plsql1.TablesNames;
+import com.korczak.plsql1.storedprocedures.TableCount;
+import com.korczak.plsql1.storedprocedures.TableDescription;
+import com.korczak.plsql1.storedprocedures.TableDescriptionSave;
+import com.korczak.plsql1.storedprocedures.TablesNames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,13 +28,13 @@ public class ControllersConfiguration {
     }
 
     @Bean
-    public TableDesc getTablesDescription() throws SQLException {
-        return new TableDesc(dataSource);
+    public TableDescription getTablesDescription() throws SQLException {
+        return new TableDescription(dataSource);
     }
 
     @Bean
-    public TableDescSave saveTableDesc() throws SQLException {
-        return new TableDescSave(dataSource);
+    public TableDescriptionSave saveTableDesc() throws SQLException {
+        return new TableDescriptionSave(dataSource);
     }
 
 }

@@ -1,22 +1,17 @@
 package com.korczak.plsql1.controller;
 
-import com.korczak.plsql1.TableCount;
-import com.korczak.plsql1.TableDesc;
-import com.korczak.plsql1.TableDescSave;
-import com.korczak.plsql1.TablesNames;
+import com.korczak.plsql1.storedprocedures.TableCount;
+import com.korczak.plsql1.storedprocedures.TableDescription;
+import com.korczak.plsql1.storedprocedures.TableDescriptionSave;
+import com.korczak.plsql1.storedprocedures.TablesNames;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 
 public class ButtonController extends GenericController {
@@ -54,8 +49,8 @@ public class ButtonController extends GenericController {
             TableCount myProcedure = applicationContext.getBean(TableCount.class);
             Object tableCount = myProcedure.execute(selectedTableName).get("table_count");
             countText.setText(tableCount.toString());
-            TableDesc description = applicationContext.getBean(TableDesc.class);
-            String tableDesc = description.execute(selectedTableName).get("table_count").toString();
+            TableDescription description = applicationContext.getBean(TableDescription.class);
+            String tableDesc = description.execute(selectedTableName).get("table_desc").toString();
             nameCol.setCellValueFactory(
                     new PropertyValueFactory<>("name")
             );
@@ -86,8 +81,8 @@ public class ButtonController extends GenericController {
         }
     }
 
-    public void onTableDescSaveAction(Event e) {
-        TableDescSave procedure = applicationContext.getBean(TableDescSave.class);
+    public void onTableDescriptionSaveAction(Event e) {
+        TableDescriptionSave procedure = applicationContext.getBean(TableDescriptionSave.class);
         procedure.execute(selectedTableName);
     }
 

@@ -1,4 +1,4 @@
-package com.korczak.plsql1;
+package com.korczak.plsql1.storedprocedures;
 
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.object.StoredProcedure;
@@ -10,10 +10,10 @@ import java.util.Map;
 
 public class TablesNames extends StoredProcedure {
 
-    private static final String SQL = "hr.get_tables_names";
+    private static final String GET_TABLE_NAMES_FUNCTION = "hr.get_tables_names";
 
     public TablesNames(DataSource dataSource) {
-        super(dataSource, SQL);
+        super(dataSource, GET_TABLE_NAMES_FUNCTION);
         declareParameter(new SqlOutParameter("tables_names", Types.VARCHAR));
         setFunction(true);//you must set this as it distinguishes it from a sproc
         compile();
@@ -21,7 +21,6 @@ public class TablesNames extends StoredProcedure {
 
     public String execute() {
         Map<String, String> inputParams = new HashMap();
-        inputParams.put("tables_names", "aa");
         Map<String, Object> outputParams = execute(inputParams);
         if (!outputParams.isEmpty()) {
             Object tables_names = outputParams.get("tables_names");

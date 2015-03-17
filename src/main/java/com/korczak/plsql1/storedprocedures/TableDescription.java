@@ -1,4 +1,4 @@
-package com.korczak.plsql1;
+package com.korczak.plsql1.storedprocedures;
 
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
@@ -10,13 +10,13 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TableDesc extends StoredProcedure {
+public class TableDescription extends StoredProcedure {
 
-    private static final String SQL = "hr.get_table_description";
+    private static final String GET_TABLE_DESCRIPTION_FUNCTION = "hr.get_table_description";
 
-    public TableDesc(DataSource dataSource) {
-        super(dataSource, SQL);
-        declareParameter(new SqlOutParameter("table_count", Types.VARCHAR));
+    public TableDescription(DataSource dataSource) {
+        super(dataSource, GET_TABLE_DESCRIPTION_FUNCTION);
+        declareParameter(new SqlOutParameter("table_desc", Types.VARCHAR));
         declareParameter(new SqlParameter("table_name", Types.VARCHAR));
         setFunction(true);//you must set this as it distinguishes it from a sproc
         compile();
@@ -28,12 +28,11 @@ public class TableDesc extends StoredProcedure {
 
         Map<String, Object> outputParams = execute(inputParams);
         if (!outputParams.isEmpty()) {
-            Object rowCount = outputParams.get("table_count");
+            Object rowCount = outputParams.get("table_desc");
             if (rowCount instanceof BigDecimal) {
                 return (String) rowCount;
             }
         }
         return null;
     }
-
 }
