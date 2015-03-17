@@ -2,16 +2,15 @@ package com.korczak.plsql1.controller;
 
 import com.korczak.plsql1.TableCount;
 import com.korczak.plsql1.TableDesc;
+import com.korczak.plsql1.TableDescSave;
 import com.korczak.plsql1.TablesNames;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
@@ -27,35 +26,36 @@ public class ButtonController extends GenericController {
 
     @FXML
     private TextArea countText;
+
     @FXML
     private TableView descTable;
 
-    TableColumn nameCol = new TableColumn("Name");
-    TableColumn nullCol = new TableColumn("Null");
-    TableColumn typeCol = new TableColumn("Type");
-    int temp = 0;
+    private final TableColumn nameCol = new TableColumn("Name");
+    private final TableColumn nullCol = new TableColumn("Null");
+    private final TableColumn typeCol = new TableColumn("Type");
+    private int temp = 0;
 
+    private Object selectedTableName = null;
 
-    public void onCountriesAction(Event e) {
+    public void onGetTableNamesAction(Event e) {
 
-        TablesNames procedure = applicationContext.getBean(TablesNames.class);
+        TablesNames tableNamesProcedure = applicationContext.getBean(TablesNames.class);
 
-        String allTableNames = procedure.execute();
-        System.out.println(allTableNames);
-        String[] splitedTableNames = allTableNames.split(",");
-        List<String> listOfTables = Arrays.asList(splitedTableNames);
+        String allTableNames = tableNamesProcedure.execute();
+        String[] splittedTableNames = allTableNames.split(",");
 
-        ObservableList<String> items = FXCollections.observableArrayList(Arrays.asList(splitedTableNames));
+        ObservableList<String> items = FXCollections.observableArrayList(splittedTableNames);
         listOfTablesNames.setItems(items);
     }
 
     public void handleMouseClick(MouseEvent arg0) {
-        if (listOfTablesNames.getSelectionModel().getSelectedItem() != null) {
+        selectedTableName = listOfTablesNames.getSelectionModel().getSelectedItem();
+        if (selectedTableName != null) {
             TableCount myProcedure = applicationContext.getBean(TableCount.class);
-            Object tableCount = myProcedure.execute(listOfTablesNames.getSelectionModel().getSelectedItem()).get("table_count");
+            Object tableCount = myProcedure.execute(selectedTableName).get("table_count");
             countText.setText(tableCount.toString());
             TableDesc description = applicationContext.getBean(TableDesc.class);
-            String tableDesc = description.execute(listOfTablesNames.getSelectionModel().getSelectedItem()).get("table_count").toString();
+            String tableDesc = description.execute(selectedTableName).get("table_count").toString();
             nameCol.setCellValueFactory(
                     new PropertyValueFactory<>("name")
             );
@@ -84,6 +84,11 @@ public class ButtonController extends GenericController {
             }
             temp++;
         }
+    }
+
+    public void onTableDescSaveAction(Event e) {
+        TableDescSave procedure = applicationContext.getBean(TableDescSave.class);
+        procedure.execute(selectedTableName);
     }
 
     public static class Desc {

@@ -11,14 +11,19 @@
     <children>
         <ListView fx:id="listOfTablesNames" onMouseClicked="#handleMouseClick" layoutX="7.0" layoutY="6.0"
                   prefHeight="319.0" prefWidth="200.0"/>
-        <Button fx:id="myButton" onAction="#onCountriesAction" layoutX="6.0" layoutY="333.0" mnemonicParsing="false"
+
+        <Button fx:id="getTableNamesButton" onAction="#onGetTableNamesAction" layoutX="6.0" layoutY="333.0" mnemonicParsing="false"
                 prefHeight="25.0" prefWidth="200.0" text="Get names"/>
+
         <TextArea fx:id="countText" layoutX="215.0" layoutY="30.0" prefHeight="15.0" prefWidth="375.0"/>
-        <Button layoutX="220.0" layoutY="333.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0"
+
+        <Button fx:id="saveToFileButton" onAction="#onTableDescSaveAction" layoutX="220.0" layoutY="333.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0"
                 text="Save to file"/>
-        <TableView fx:id="descTable" layoutX="215.0" layoutY="85.0" prefHeight="242.0" prefWidth="376.0">
-        </TableView>
-        <Label layoutX="211.0" layoutY="14.0" text="Count"/>
-        <Label layoutX="215.0" layoutY="70.0" text="Desc"/>
+
+        <TableView fx:id="descTable" layoutX="215.0" layoutY="85.0" prefHeight="242.0" prefWidth="376.0"/>
+
+
+        <Label layoutX="211.0" layoutY="14.0" text="Rowcount:"/>
+        <Label layoutX="215.0" layoutY="70.0" text="Description:"/>
     </children>
 </Pane>

@@ -2,6 +2,7 @@ package com.korczak.plsql1.spring;
 
 import com.korczak.plsql1.TableCount;
 import com.korczak.plsql1.TableDesc;
+import com.korczak.plsql1.TableDescSave;
 import com.korczak.plsql1.TablesNames;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,11 @@ public class ControllersConfiguration {
     @Bean
     public TableDesc getTablesDescription() throws SQLException {
         return new TableDesc(dataSource);
+    }
+
+    @Bean
+    public TableDescSave saveTableDesc() throws SQLException {
+        return new TableDescSave(dataSource);
     }
 
 }

@@ -15,7 +15,7 @@ public class DatabaseConfiguration {
         OracleDataSource dataSource = new OracleDataSource();
         dataSource.setURL("jdbc:oracle:thin:@localhost:1521:xe");
         dataSource.setUser("hr");
-        dataSource.setPassword("xxqi1nkv");
+        dataSource.setPassword("hr");
         return dataSource;
     }
 }
