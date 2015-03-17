@@ -30,15 +30,11 @@ public class ButtonController extends GenericController {
     @FXML
     private TableView descTable;
 
-    TableColumn firstNameCol = new TableColumn("Name");
-    TableColumn lastNameCol = new TableColumn("Type");
-    TableColumn emailCol = new TableColumn("IsNull");
+    TableColumn nameCol = new TableColumn("Name");
+    TableColumn nullCol = new TableColumn("Null");
+    TableColumn typeCol = new TableColumn("Type");
     int temp = 0;
 
-    public void onEmployeesAction(Event e) {
-        TableCount myProcedure = applicationContext.getBean(TableCount.class);
-        System.out.println(myProcedure.execute("employees"));
-    }
 
     public void onCountriesAction(Event e) {
 
@@ -52,6 +48,7 @@ public class ButtonController extends GenericController {
         ObservableList<String> items = FXCollections.observableArrayList(Arrays.asList(splitedTableNames));
         listOfTablesNames.setItems(items);
     }
+
     public void handleMouseClick(MouseEvent arg0) {
         if (listOfTablesNames.getSelectionModel().getSelectedItem() != null) {
             TableCount myProcedure = applicationContext.getBean(TableCount.class);
@@ -59,68 +56,46 @@ public class ButtonController extends GenericController {
             countText.setText(tableCount.toString());
             TableDesc description = applicationContext.getBean(TableDesc.class);
             String tableDesc = description.execute(listOfTablesNames.getSelectionModel().getSelectedItem()).get("table_count").toString();
-            System.out.println(tableDesc);
-            firstNameCol.setCellValueFactory(
+            nameCol.setCellValueFactory(
                     new PropertyValueFactory<>("name")
             );
-            lastNameCol.setCellValueFactory(
-                    new PropertyValueFactory<>("type")
-            );
-            emailCol.setCellValueFactory(
+            nullCol.setCellValueFactory(
                     new PropertyValueFactory<>("isNull")
             );
-             ObservableList<Desc> data = FXCollections.observableArrayList();
+            typeCol.setCellValueFactory(
+                    new PropertyValueFactory<>("type")
+            );
+            nameCol.setPrefWidth(125);
+            nullCol.setPrefWidth(125);
+            typeCol.setPrefWidth(125);
+            ObservableList<Desc> data = FXCollections.observableArrayList();
             String[] row = tableDesc.split(",");
-            for (int i = 0; i<row.length ; i++){
-                String[] cells = new String[]{"","",""};
+            for (int i = 0; i < row.length; i++) {
+                String[] cells = new String[]{"", "", ""};
                 cells = row[i].split(":");
-                if (cells[2].equals("empty")){
-                    cells[2]="";
+                if (cells[1].equals("empty")) {
+                    cells[1] = "";
                 }
-                data.add(new Desc (cells[0], cells[1], cells[2]));
+                data.add(new Desc(cells[0], cells[1], cells[2]));
             }
             descTable.setItems(data);
-            if(temp==0) {
-                descTable.getColumns().addAll(firstNameCol, lastNameCol, emailCol);
+            if (temp == 0) {
+                descTable.getColumns().addAll(nameCol, nullCol, typeCol);
             }
             temp++;
         }
     }
 
-    public void onDepartmentsAction(Event e) {
-        TableCount myProcedure = applicationContext.getBean(TableCount.class);
-        System.out.println(myProcedure.execute("departments"));
-    }
-
-    public void onJobHistoryAction(Event e) {
-        TableCount myProcedure = applicationContext.getBean(TableCount.class);
-        System.out.println(myProcedure.execute("job_history"));
-    }
-
-    public void onJobsAction(Event e) {
-        TableCount myProcedure = applicationContext.getBean(TableCount.class);
-        System.out.println(myProcedure.execute("jobs"));
-    }
-
-    public void onLocationsAction(Event e) {
-        TableCount myProcedure = applicationContext.getBean(TableCount.class);
-        System.out.println(myProcedure.execute("locations"));
-    }
-
-    public void onRegionsAction(Event e) {
-        TableCount myProcedure = applicationContext.getBean(TableCount.class);
-        System.out.println(myProcedure.execute("regions"));
-    }
     public static class Desc {
 
         private final SimpleStringProperty name;
         private final SimpleStringProperty type;
         private final SimpleStringProperty isNull;
 
-        private Desc(String name, String type, String isNull) {
+        private Desc(String name, String isNull, String type) {
             this.name = new SimpleStringProperty(name);
-            this.type = new SimpleStringProperty(type);
             this.isNull = new SimpleStringProperty(isNull);
+            this.type = new SimpleStringProperty(type);
         }
 
         public String gettName() {
@@ -130,6 +105,7 @@ public class ButtonController extends GenericController {
         public String getType() {
             return type.get();
         }
+
         public String getName() {
             return name.get();
         }

@@ -12,18 +12,18 @@ public class TablesNames extends StoredProcedure {
 
     private static final String SQL = "hr.get_tables_names";
 
-    public TablesNames(DataSource dataSource){
-        super(dataSource,SQL);
+    public TablesNames(DataSource dataSource) {
+        super(dataSource, SQL);
         declareParameter(new SqlOutParameter("tables_names", Types.VARCHAR));
         setFunction(true);//you must set this as it distinguishes it from a sproc
         compile();
     }
 
-    public String execute(){
+    public String execute() {
         Map<String, String> inputParams = new HashMap();
         inputParams.put("tables_names", "aa");
         Map<String, Object> outputParams = execute(inputParams);
-        if(!outputParams.isEmpty()) {
+        if (!outputParams.isEmpty()) {
             Object tables_names = outputParams.get("tables_names");
             if (tables_names instanceof String) {
                 return (String) tables_names;

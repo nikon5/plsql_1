@@ -14,20 +14,20 @@ public class TableCount extends StoredProcedure {
 
     private static final String SQL = "hr.table_row_count";
 
-    public TableCount(DataSource dataSource){
-        super(dataSource,SQL);
+    public TableCount(DataSource dataSource) {
+        super(dataSource, SQL);
         declareParameter(new SqlOutParameter("table_count", Types.NUMERIC));
-        declareParameter(new SqlParameter("table_name",Types.VARCHAR));
+        declareParameter(new SqlParameter("table_name", Types.VARCHAR));
         setFunction(true);//you must set this as it distinguishes it from a sproc
         compile();
     }
 
-    public Integer execute(String tableName){
+    public Integer execute(String tableName) {
         Map<String, String> inputParams = new HashMap();
         inputParams.put("table_name", tableName);
 
         Map<String, Object> outputParams = execute(inputParams);
-        if(!outputParams.isEmpty()) {
+        if (!outputParams.isEmpty()) {
             Object rowCount = outputParams.get("table_count");
             if (rowCount instanceof BigDecimal) {
                 return (Integer) rowCount;

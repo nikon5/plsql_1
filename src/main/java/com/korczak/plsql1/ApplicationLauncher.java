@@ -14,11 +14,11 @@ public class ApplicationLauncher extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
 
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("main-window.fxml"));
         primaryStage.setTitle("PL/SQL Viewer");
-        primaryStage.setScene(new Scene(root, 500, 475));
+        primaryStage.setScene(new Scene(root, 600, 360));
         primaryStage.show();
     }
 }
