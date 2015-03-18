@@ -4,7 +4,6 @@ import com.korczak.plsql1.storedprocedures.TableCount;
 import com.korczak.plsql1.storedprocedures.TableDescription;
 import com.korczak.plsql1.storedprocedures.TableDescriptionSave;
 import com.korczak.plsql1.storedprocedures.TablesNames;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -47,6 +46,7 @@ public class ButtonController extends GenericController {
     }
 
     public void handleMouseClick(MouseEvent arg0) {
+
         selectedTableName = (String) listOfTablesNames.getSelectionModel().getSelectedItem();
         if (selectedTableName != null) {
             TableCount tableCountProcedure = applicationContext.getBean(TableCount.class);
@@ -58,37 +58,44 @@ public class ButtonController extends GenericController {
 
             prepareTableColumns();
 
-            ObservableList<Desc> data = FXCollections.observableArrayList();
             String[] rows = tableDesc.split(",");
 
-
-            for(String row : rows) {
-                String[] cells = row.split(":");
+            ObservableList<DescriptionRow> descriptionTableList = FXCollections.observableArrayList();
+                for(String row : rows){
+                    String[] cells = row.split(":");
                 if (cells[1].equals("empty")) {
                     cells[1] = "";
                 }
-                data.add(new Desc(cells[0], cells[1], cells[2]));
-                if(rowCounter ==0) {
-                    descTable.getColumns().addAll(nameColumn, nullableColumn, typeColumn);
+                descriptionTableList.add(new DescriptionRow(cells[0], cells[1], cells[2]));
+                if(rowCounter == 0) {
+                    addHader();
                 }
                 rowCounter++;
             }
-            descTable.setItems(data);
+            descTable.setItems(descriptionTableList);
         }
+    }
+
+    private void addHader() {
+
+        descTable.getColumns().addAll(nameColumn, nullableColumn, typeColumn);
     }
 
     private void prepareTableColumns() {
 
+        setCellValueFactories();
+        setFixedWidthOnColumns();
+    }
 
-        nameColumn.setCellValueFactory(
-                new PropertyValueFactory<>("name")
-        );
-        nullableColumn.setCellValueFactory(
-                new PropertyValueFactory<>("isNull")
-        );
-        typeColumn.setCellValueFactory(
-                new PropertyValueFactory<>("type")
-        );
+    private void setCellValueFactories() {
+
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nullableColumn.setCellValueFactory(new PropertyValueFactory<>("isNull"));
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
+    }
+
+    private void setFixedWidthOnColumns() {
+
         nameColumn.setPrefWidth(124);
         nullableColumn.setPrefWidth(124);
         typeColumn.setPrefWidth(124);
@@ -99,58 +106,4 @@ public class ButtonController extends GenericController {
         TableDescriptionSave procedure = applicationContext.getBean(TableDescriptionSave.class);
         procedure.execute(selectedTableName);
     }
-
-    public static class Desc {
-
-        private final SimpleStringProperty name;
-        private final SimpleStringProperty type;
-        private final SimpleStringProperty isNull;
-
-        private Desc(String name, String isNull, String type) {
-            this.name = new SimpleStringProperty(name);
-            this.isNull = new SimpleStringProperty(isNull);
-            this.type = new SimpleStringProperty(type);
-        }
-
-        public String gettName() {
-            return name.get();
-        }
-
-        public String getType() {
-            return type.get();
-        }
-
-        public String getName() {
-            return name.get();
-        }
-
-        public SimpleStringProperty nameProperty() {
-            return name;
-        }
-
-        public SimpleStringProperty typeProperty() {
-            return type;
-        }
-
-        public String getIsNull() {
-            return isNull.get();
-        }
-
-        public SimpleStringProperty isNullProperty() {
-            return isNull;
-        }
-
-        public void setType(String type) {
-            this.type.set(type);
-        }
-
-        public void setIsNull(String isNull) {
-            this.isNull.set(isNull);
-        }
-
-        public void setName(String name) {
-            this.name.set(name);
-        }
-    }
 }
-
