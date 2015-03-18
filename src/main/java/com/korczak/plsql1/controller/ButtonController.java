@@ -13,6 +13,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 
+import java.math.BigDecimal;
+
 
 public class ButtonController extends GenericController {
 
@@ -25,12 +27,13 @@ public class ButtonController extends GenericController {
     @FXML
     private TableView descTable;
 
-    private final TableColumn nameCol = new TableColumn("Name");
-    private final TableColumn nullCol = new TableColumn("Null");
-    private final TableColumn typeCol = new TableColumn("Type");
-    private int temp = 0;
+    private final TableColumn nameColumn = new TableColumn("Name");
+    private final TableColumn nullableColumn = new TableColumn("Nullable");
+    private final TableColumn typeColumn = new TableColumn("Type");
+    private int rowCounter = 0;
 
-    private Object selectedTableName = null;
+    private String selectedTableName = null;
+
 
     public void onGetTableNamesAction(Event e) {
 
@@ -44,44 +47,55 @@ public class ButtonController extends GenericController {
     }
 
     public void handleMouseClick(MouseEvent arg0) {
-        selectedTableName = listOfTablesNames.getSelectionModel().getSelectedItem();
+        selectedTableName = (String) listOfTablesNames.getSelectionModel().getSelectedItem();
         if (selectedTableName != null) {
-            TableCount myProcedure = applicationContext.getBean(TableCount.class);
-            Object tableCount = myProcedure.execute(selectedTableName).get("table_count");
+            TableCount tableCountProcedure = applicationContext.getBean(TableCount.class);
+            BigDecimal tableCount = tableCountProcedure.execute(selectedTableName);
             countText.setText(tableCount.toString());
-            TableDescription description = applicationContext.getBean(TableDescription.class);
-            String tableDesc = description.execute(selectedTableName).get("table_desc").toString();
-            nameCol.setCellValueFactory(
-                    new PropertyValueFactory<>("name")
-            );
-            nullCol.setCellValueFactory(
-                    new PropertyValueFactory<>("isNull")
-            );
-            typeCol.setCellValueFactory(
-                    new PropertyValueFactory<>("type")
-            );
-            nameCol.setPrefWidth(124);
-            nullCol.setPrefWidth(124);
-            typeCol.setPrefWidth(124);
+
+            TableDescription tableDescriptionProcedure = applicationContext.getBean(TableDescription.class);
+            String tableDesc = tableDescriptionProcedure.execute(selectedTableName);
+
+            prepareTableColumns();
+
             ObservableList<Desc> data = FXCollections.observableArrayList();
-            String[] row = tableDesc.split(",");
-            for (int i = 0; i < row.length; i++) {
-                String[] cells = new String[]{"", "", ""};
-                cells = row[i].split(":");
+            String[] rows = tableDesc.split(",");
+
+
+            for(String row : rows) {
+                String[] cells = row.split(":");
                 if (cells[1].equals("empty")) {
                     cells[1] = "";
                 }
                 data.add(new Desc(cells[0], cells[1], cells[2]));
+                if(rowCounter ==0) {
+                    descTable.getColumns().addAll(nameColumn, nullableColumn, typeColumn);
+                }
+                rowCounter++;
             }
             descTable.setItems(data);
-            if (temp == 0) {
-                descTable.getColumns().addAll(nameCol, nullCol, typeCol);
-            }
-            temp++;
         }
     }
 
+    private void prepareTableColumns() {
+
+
+        nameColumn.setCellValueFactory(
+                new PropertyValueFactory<>("name")
+        );
+        nullableColumn.setCellValueFactory(
+                new PropertyValueFactory<>("isNull")
+        );
+        typeColumn.setCellValueFactory(
+                new PropertyValueFactory<>("type")
+        );
+        nameColumn.setPrefWidth(124);
+        nullableColumn.setPrefWidth(124);
+        typeColumn.setPrefWidth(124);
+    }
+
     public void onTableDescriptionSaveAction(Event e) {
+
         TableDescriptionSave procedure = applicationContext.getBean(TableDescriptionSave.class);
         procedure.execute(selectedTableName);
     }

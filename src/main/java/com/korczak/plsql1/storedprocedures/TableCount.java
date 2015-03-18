@@ -22,7 +22,7 @@ public class TableCount extends StoredProcedure {
         compile();
     }
 
-    public Integer execute(String tableName) {
+    public BigDecimal execute(String tableName) {
         Map<String, String> inputParams = new HashMap();
         inputParams.put("table_name", tableName);
 
@@ -30,7 +30,7 @@ public class TableCount extends StoredProcedure {
         if (!outputParams.isEmpty()) {
             Object rowCount = outputParams.get("table_count");
             if (rowCount instanceof BigDecimal) {
-                return (Integer) rowCount;
+                return (BigDecimal) rowCount;
             }
         }
         return null;

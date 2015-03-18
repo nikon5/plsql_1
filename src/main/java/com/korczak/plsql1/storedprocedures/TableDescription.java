@@ -28,9 +28,9 @@ public class TableDescription extends StoredProcedure {
 
         Map<String, Object> outputParams = execute(inputParams);
         if (!outputParams.isEmpty()) {
-            Object rowCount = outputParams.get("table_desc");
-            if (rowCount instanceof BigDecimal) {
-                return (String) rowCount;
+            Object tableDesc = outputParams.get("table_desc");
+            if (tableDesc instanceof String) {
+                return (String) tableDesc;
             }
         }
         return null;
