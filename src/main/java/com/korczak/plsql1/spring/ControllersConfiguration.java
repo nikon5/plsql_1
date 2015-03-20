@@ -1,5 +1,6 @@
 package com.korczak.plsql1.spring;
 
+import com.korczak.plsql1.TableInputRows;
 import com.korczak.plsql1.storedprocedures.TableCount;
 import com.korczak.plsql1.storedprocedures.TableDescription;
 import com.korczak.plsql1.storedprocedures.TableDescriptionSave;
@@ -35,6 +36,11 @@ public class ControllersConfiguration {
     @Bean
     public TableDescriptionSave saveTableDesc() throws SQLException {
         return new TableDescriptionSave(dataSource);
+    }
+
+    @Bean
+    public TableInputRows getTablesRows() throws SQLException {
+        return new TableInputRows(dataSource);
     }
 
 }

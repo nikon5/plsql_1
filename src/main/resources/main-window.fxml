@@ -23,5 +23,7 @@
 
         <Label layoutX="211.0" layoutY="14.0" text="Rowcount:"/>
         <Label layoutX="215.0" layoutY="70.0" text="Description:"/>
+        <Button fx:id="inputNewRows" onAction="#onInsertRows" layoutX="7.0" layoutY="361.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Insert rows" />
+        <TextField fx:id="howManyRows" layoutX="220.0" layoutY="361.0" prefHeight="25.0" prefWidth="375.0" />
     </children>
 </Pane>

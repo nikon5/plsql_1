@@ -1,16 +1,26 @@
 package com.korczak.plsql1.controller;
 
+import com.korczak.plsql1.TableInputRows;
 import com.korczak.plsql1.storedprocedures.TableCount;
 import com.korczak.plsql1.storedprocedures.TableDescription;
 import com.korczak.plsql1.storedprocedures.TableDescriptionSave;
 import com.korczak.plsql1.storedprocedures.TablesNames;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.math.BigDecimal;
 
@@ -22,6 +32,9 @@ public class ButtonController extends GenericController {
 
     @FXML
     private TextArea countText;
+
+    @FXML
+    private TextField howManyRows;
 
     @FXML
     private TableView descTable;
@@ -38,13 +51,54 @@ public class ButtonController extends GenericController {
 
         TablesNames tableNamesProcedure = applicationContext.getBean(TablesNames.class);
 
+
         String allTableNames = tableNamesProcedure.execute();
         String[] splittedTableNames = allTableNames.split(",");
+
 
         ObservableList<String> items = FXCollections.observableArrayList(splittedTableNames);
         listOfTablesNames.setItems(items);
     }
 
+    public void onInsertRows(Event e) {
+        final Stage dialog = new Stage();
+        dialog.initModality(Modality.WINDOW_MODAL);
+        Button noButton = new Button("No");
+        noButton.setOnAction(new EventHandler<ActionEvent>(){
+
+            @Override
+            public void handle(ActionEvent arg0) {
+                dialog.close();
+            }
+
+        });
+        Button yesButton = new Button("Yes");
+        yesButton.setOnAction(new EventHandler<ActionEvent>(){
+
+            @Override
+            public void handle(ActionEvent arg0) {
+                TableInputRows procedure = applicationContext.getBean(TableInputRows.class);
+                int howMany;
+                try {
+                    howMany = Integer.parseInt(howManyRows.getText());
+                } catch (NumberFormatException ex){
+                    howMany = 0;
+                }
+                if (howMany>0){
+                    procedure.execute(howMany);
+                }
+                dialog.close();
+            }
+
+        });
+        Scene dialogScene = new Scene(VBoxBuilder.create()
+                .children(new Text("Do you want to commit your changes?"), noButton, yesButton)
+                .alignment(Pos.CENTER)
+                .padding(new Insets(10))
+                .build());
+        dialog.setScene(dialogScene);
+        dialog.show();
+    }
     public void handleMouseClick(MouseEvent arg0) {
 
         selectedTableName = (String) listOfTablesNames.getSelectionModel().getSelectedItem();
