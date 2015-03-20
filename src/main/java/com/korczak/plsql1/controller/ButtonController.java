@@ -1,6 +1,6 @@
 package com.korczak.plsql1.controller;
 
-import com.korczak.plsql1.TableInputRows;
+import com.korczak.plsql1.storedprocedures.TableInputRows;
 import com.korczak.plsql1.spring.DatabaseConfiguration;
 import com.korczak.plsql1.storedprocedures.TableCount;
 import com.korczak.plsql1.storedprocedures.TableDescription;
@@ -18,7 +18,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -124,7 +123,8 @@ public class ButtonController extends GenericController {
             howMany = Integer.parseInt(howManyRows.getText());
             TableInputRows procedure = applicationContext.getBean(TableInputRows.class);
             if (howMany>0){
-                procedure.execute(howMany);
+                BigDecimal a=procedure.execute(howMany);
+                System.out.println(a);
             }
             Scene dialogScene = new Scene(VBoxBuilder.create()
                     .children(new Text("Do you want to commit your changes?"), noButton, yesButton)

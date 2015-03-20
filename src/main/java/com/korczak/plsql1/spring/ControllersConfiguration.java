@@ -1,6 +1,6 @@
 package com.korczak.plsql1.spring;
 
-import com.korczak.plsql1.TableInputRows;
+import com.korczak.plsql1.storedprocedures.TableInputRows;
 import com.korczak.plsql1.storedprocedures.TableCount;
 import com.korczak.plsql1.storedprocedures.TableDescription;
 import com.korczak.plsql1.storedprocedures.TableDescriptionSave;
