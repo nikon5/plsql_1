@@ -1,6 +1,7 @@
 package com.korczak.plsql1.controller;
 
 import com.korczak.plsql1.TableInputRows;
+import com.korczak.plsql1.spring.DatabaseConfiguration;
 import com.korczak.plsql1.storedprocedures.TableCount;
 import com.korczak.plsql1.storedprocedures.TableDescription;
 import com.korczak.plsql1.storedprocedures.TableDescriptionSave;
@@ -23,7 +24,10 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import javax.sql.DataSource;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Collections;
 
 
@@ -63,10 +67,12 @@ public class ButtonController extends GenericController {
     }
 
     public void onInsertRows(Event e) {
-        setRed(howManyRows);
-
         if (howManyRows.getText().length()== 0 ) {
+            setRed(howManyRows);
             return;
+        }
+        else {
+            removeRed(howManyRows);
         }
         final Stage dialog = new Stage();
         dialog.initModality(Modality.WINDOW_MODAL);
@@ -86,6 +92,13 @@ public class ButtonController extends GenericController {
 
             @Override
             public void handle(ActionEvent arg0) {
+                try {
+                    DataSource ds = (DataSource)applicationContext.getBean(DatabaseConfiguration.class).getDataSource();
+                    Connection c = ds.getConnection();
+                    c.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
                 dialog.close();
             }
 
@@ -95,15 +108,12 @@ public class ButtonController extends GenericController {
 
             @Override
             public void handle(ActionEvent arg0) {
-                TableInputRows procedure = applicationContext.getBean(TableInputRows.class);
-                int howMany;
                 try {
-                    howMany = Integer.parseInt(howManyRows.getText());
-                } catch (NumberFormatException ex){
-                    howMany = 0;
-                }
-                if (howMany>0){
-                    procedure.execute(howMany);
+                    DataSource ds = (DataSource)applicationContext.getBean(DatabaseConfiguration.class).getDataSource();
+                    Connection c = ds.getConnection();
+                    c.commit();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
                 }
                 dialog.close();
             }
@@ -112,6 +122,10 @@ public class ButtonController extends GenericController {
         int howMany;
         try {
             howMany = Integer.parseInt(howManyRows.getText());
+            TableInputRows procedure = applicationContext.getBean(TableInputRows.class);
+            if (howMany>0){
+                procedure.execute(howMany);
+            }
             Scene dialogScene = new Scene(VBoxBuilder.create()
                     .children(new Text("Do you want to commit your changes?"), noButton, yesButton)
                     .alignment(Pos.CENTER)
