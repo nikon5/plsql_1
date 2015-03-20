@@ -17,12 +17,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 
 
 public class ButtonController extends GenericController {
@@ -61,8 +63,24 @@ public class ButtonController extends GenericController {
     }
 
     public void onInsertRows(Event e) {
+        setRed(howManyRows);
+
+        if (howManyRows.getText().length()== 0 ) {
+            return;
+        }
         final Stage dialog = new Stage();
         dialog.initModality(Modality.WINDOW_MODAL);
+
+
+        Button okButton = new Button("Ok");
+        okButton.setOnAction(new EventHandler<ActionEvent>(){
+
+            @Override
+            public void handle(ActionEvent arg0) {
+                dialog.close();
+            }
+
+        });
         Button noButton = new Button("No");
         noButton.setOnAction(new EventHandler<ActionEvent>(){
 
@@ -91,14 +109,42 @@ public class ButtonController extends GenericController {
             }
 
         });
-        Scene dialogScene = new Scene(VBoxBuilder.create()
-                .children(new Text("Do you want to commit your changes?"), noButton, yesButton)
-                .alignment(Pos.CENTER)
-                .padding(new Insets(10))
-                .build());
-        dialog.setScene(dialogScene);
-        dialog.show();
+        int howMany;
+        try {
+            howMany = Integer.parseInt(howManyRows.getText());
+            Scene dialogScene = new Scene(VBoxBuilder.create()
+                    .children(new Text("Do you want to commit your changes?"), noButton, yesButton)
+                    .alignment(Pos.CENTER)
+                    .padding(new Insets(10))
+                    .build());
+            dialog.setScene(dialogScene);
+            dialog.show();
+        } catch (NumberFormatException ex){
+            howMany = 0;
+            Scene dialogScene = new Scene(VBoxBuilder.create()
+                    .children(new Text("Provide number"), okButton)
+                    .alignment(Pos.CENTER)
+                    .padding(new Insets(10))
+                    .build());
+            dialog.setScene(dialogScene);
+            dialog.show();
+        }
     }
+
+    private void setRed(TextField tf) {
+        ObservableList<String> styleClass = tf.getStyleClass();
+
+        if(!styleClass.contains("tferror")) {
+            styleClass.add("tferror");
+        }
+    }
+
+
+    private void removeRed(TextField tf) {
+        ObservableList<String> styleClass = tf.getStyleClass();
+        styleClass.removeAll(Collections.singleton("tferror"));
+    }
+
     public void handleMouseClick(MouseEvent arg0) {
 
         selectedTableName = (String) listOfTablesNames.getSelectionModel().getSelectedItem();
