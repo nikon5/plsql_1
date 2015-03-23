@@ -100,7 +100,7 @@ BEGIN
 END;
 
 --**************************************************************************************************
---Jakby co to mamy oddzielne funkcje dla każdej tabeli również. 
+--Jakby co to mamy oddzielne funkcje dla każdej tabeli również.
 create or replace
 FUNCTION WRITE_TABLE_DATA_TO_FILE (TABLE_NAME IN VARCHAR2, SEPARATOR IN VARCHAR2)
 RETURN NUMBER

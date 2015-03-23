@@ -126,7 +126,7 @@ public class ButtonController extends GenericController {
             TableInputRows procedure = applicationContext.getBean(TableInputRows.class);
             if (howMany>0){
                 BigDecimal insertTimeValue=procedure.execute(howMany);
-                insertTime.setText(insertTimeValue.toString()+" [ms]");
+                insertTime.setText(insertTimeValue.toString() + " [ms]");
             }
             Scene dialogScene = new Scene(VBoxBuilder.create()
                     .children(new Text("Do you want to commit your changes?"), noButton, yesButton)
@@ -202,21 +202,23 @@ public class ButtonController extends GenericController {
         final Stage dialog = new Stage();
         dialog.initModality(Modality.WINDOW_MODAL);
         TextField separatorTextField = new TextField();
+        separatorTextField.setText(DEFAULT_SEPARATOR);
         Button okButton = new Button("Ok");
         okButton.setOnAction(new EventHandler<ActionEvent>(){
 
             @Override
             public void handle(ActionEvent arg0) {
                 if (separatorTextField.getText().length()>0) {
+
                     BigDecimal timeElapsed = procedure.execute(selectedTableName, separatorTextField.getText().toString());  //TODO: SEPARATOR MUST BE REAL PARAMETER - READ FROM USER
-                    String result = Float.parseFloat(timeElapsed.toString()) / 10 + "[ms]";
-                    System.out.println("Persisting " + selectedTableName + " data to file takes: " + Float.parseFloat(timeElapsed.toString()) / 10 + "[ms]");
+                    String result = Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]";
+                    System.out.println("Persisting " + selectedTableName + " data to file takes: " + Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]");
                     saveTime.setText(result);
                 }
                 else {
                     BigDecimal timeElapsed = procedure.execute(selectedTableName, DEFAULT_SEPARATOR);  //TODO: SEPARATOR MUST BE REAL PARAMETER - READ FROM USER
-                    String result = Float.parseFloat(timeElapsed.toString()) / 10 + "[ms]";
-                    System.out.println("Persisting " + selectedTableName + " data to file takes: " + Float.parseFloat(timeElapsed.toString()) / 10 + "[ms]");
+                    String result = Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]";
+                    System.out.println("Persisting " + selectedTableName + " data to file takes: " + Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]");
                     saveTime.setText(result);
                 }
                 dialog.close();
@@ -224,7 +226,7 @@ public class ButtonController extends GenericController {
 
         });
         Button closeButton = new Button("Close");
-        okButton.setOnAction(new EventHandler<ActionEvent>(){
+        closeButton.setOnAction(new EventHandler<ActionEvent>(){
 
             @Override
             public void handle(ActionEvent arg0) {
@@ -238,7 +240,6 @@ public class ButtonController extends GenericController {
                 .build());
         dialog.setScene(dialogScene);
         dialog.show();
-
     }
 
     private void addHader() {
