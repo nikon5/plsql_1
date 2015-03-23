@@ -1,11 +1,7 @@
 package com.korczak.plsql1.controller;
 
-import com.korczak.plsql1.storedprocedures.TableInputRows;
+import com.korczak.plsql1.storedprocedures.*;
 import com.korczak.plsql1.spring.DatabaseConfiguration;
-import com.korczak.plsql1.storedprocedures.TableCount;
-import com.korczak.plsql1.storedprocedures.TableDescription;
-import com.korczak.plsql1.storedprocedures.TableDescriptionSave;
-import com.korczak.plsql1.storedprocedures.TablesNames;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -42,7 +38,7 @@ public class ButtonController extends GenericController {
     private TextField howManyRows;
 
     @FXML
-    private TableView descTable;
+    private TableView tableDescription;
 
     private final TableColumn nameColumn = new TableColumn("Name");
     private final TableColumn nullableColumn = new TableColumn("Nullable");
@@ -50,6 +46,7 @@ public class ButtonController extends GenericController {
     private int rowCounter = 0;
 
     private String selectedTableName = null;
+    private final static String DEFAULT_SEPARATOR = ";"; //TODO: MUST FIX IT
 
 
     public void onGetTableNamesAction(Event e) {
@@ -66,7 +63,7 @@ public class ButtonController extends GenericController {
     }
 
     public void onInsertRows(Event e) {
-        if (howManyRows.getText().length()== 0 ) {
+        if (howManyRows.getText().length() == 0 ) {
             setRed(howManyRows);
             return;
         }
@@ -116,7 +113,6 @@ public class ButtonController extends GenericController {
                 }
                 dialog.close();
             }
-
         });
         int howMany;
         try {
@@ -145,14 +141,13 @@ public class ButtonController extends GenericController {
         }
     }
 
-    private void setRed(TextField tf) {
-        ObservableList<String> styleClass = tf.getStyleClass();
+    private void setRed(TextField textField) {
+        ObservableList<String> styleClass = textField.getStyleClass();
 
         if(!styleClass.contains("tferror")) {
             styleClass.add("tferror");
         }
     }
-
 
     private void removeRed(TextField tf) {
         ObservableList<String> styleClass = tf.getStyleClass();
@@ -186,13 +181,26 @@ public class ButtonController extends GenericController {
                 }
                 rowCounter++;
             }
-            descTable.setItems(descriptionTableList);
+            tableDescription.setItems(descriptionTableList);
         }
+    }
+
+    public void onTableDescriptionSaveAction(Event e) {
+
+        TableDescriptionSave procedure = applicationContext.getBean(TableDescriptionSave.class);
+        procedure.execute(selectedTableName);
+    }
+
+    public void onTableDataSaveAction (Event e){
+
+        TableDataSave procedure = applicationContext.getBean(TableDataSave.class);
+        BigDecimal timeElapsed = procedure.execute(selectedTableName, DEFAULT_SEPARATOR);  //TODO: SEPARATOR MUST BE REAL PARAMETER - READ FROM USER
+        System.out.println("Persisting " + selectedTableName + " data to file takes: " + Float.parseFloat(timeElapsed.toString()) / 10 + "[ms]");
     }
 
     private void addHader() {
 
-        descTable.getColumns().addAll(nameColumn, nullableColumn, typeColumn);
+        tableDescription.getColumns().addAll(nameColumn, nullableColumn, typeColumn);
     }
 
     private void prepareTableColumns() {
@@ -213,11 +221,5 @@ public class ButtonController extends GenericController {
         nameColumn.setPrefWidth(124);
         nullableColumn.setPrefWidth(124);
         typeColumn.setPrefWidth(124);
-    }
-
-    public void onTableDescriptionSaveAction(Event e) {
-
-        TableDescriptionSave procedure = applicationContext.getBean(TableDescriptionSave.class);
-        procedure.execute(selectedTableName);
     }
 }

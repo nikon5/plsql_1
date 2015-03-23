@@ -1,0 +1,262 @@
+create or replace
+PROCEDURE write_data_to_file (separator IN varchar2)
+IS
+  fHandle UTL_FILE.FILE_TYPE;
+  v_country_id countries.country_id%TYPE;
+  v_country_name countries.country_name%TYPE;
+  v_region_id countries.region_id%TYPE;
+
+  CURSOR table_row
+  IS
+    SELECT country_id, country_name, region_id FROM countries;
+BEGIN
+  fHandle := UTL_FILE.FOPEN('OUTPUT_DIR', 'test_file.txt', 'w');
+  OPEN table_row;
+  LOOP
+    FETCH table_row INTO v_country_id, v_country_name, v_region_id;
+    EXIT WHEN table_row%NOTFOUND;
+    UTL_FILE.PUT_LINE(fHandle, v_country_id ||separator|| v_country_name ||separator|| v_region_id);
+    --DBMS_OUTPUT.PUT_LINE(v_country_id ||separator|| v_country_name ||separator|| v_region_id);
+  END LOOP;
+  CLOSE table_row;
+  UTL_FILE.FCLOSE(fHandle);
+  END;
+
+--**************************************************************************************************
+
+  create or replace
+  PROCEDURE write_description_to_file (table_name IN varchar2)
+  IS
+    fHandle UTL_FILE.FILE_TYPE;
+    x varchar2 (2000);
+    sql_stmt varchar(2000);
+  BEGIN
+    fHandle := UTL_FILE.FOPEN('OUTPUT_DIR', 'test_file.txt', 'w');
+     --select first_name into x from employees where employee_id = 101;
+    sql_stmt := 'SELECT LISTAGG(column_name || '':'' || DECODE(nullable,''N'',''NOT NULL'', ''empty'') || '':'' || data_type, '','') WITHIN GROUP (ORDER BY 1) AS names FROM user_tab_columns WHERE table_name = :table_name';
+    EXECUTE IMMEDIATE sql_stmt INTO x USING table_name;
+    UTL_FILE.PUT_LINE(fHandle, x);
+    UTL_FILE.FCLOSE(fHandle);
+  END;
+
+--**************************************************************************************************
+
+create or replace
+FUNCTION get_table_description (table_name IN varchar2)
+   RETURN varchar2 IS
+   total_size varchar2(300);
+   sql_stmt varchar2(300);
+BEGIN
+sql_stmt := 'SELECT LISTAGG(column_name || '':'' || DECODE(nullable,''N'',''NOT NULL'', ''empty'') || '':'' || data_type, '','') WITHIN GROUP (ORDER BY 1) AS names FROM user_tab_columns WHERE table_name = :table_name';
+   EXECUTE IMMEDIATE sql_stmt INTO total_size USING table_name;
+   RETURN total_size;
+END;
+
+--**************************************************************************************************
+
+create or replace
+FUNCTION get_tables_names
+   RETURN VARCHAR2 IS
+   tables_names VARCHAR2(100);
+BEGIN
+   SELECT LISTAGG(table_name, ',') WITHIN GROUP (ORDER BY 1) AS names INTO tables_names FROM user_tables;
+
+   RETURN tables_names;
+END;
+
+--**************************************************************************************************
+
+create or replace
+FUNCTION insert_jobs_rows(rows_number IN NUMBER)
+RETURN NUMBER IS
+  v_start_time NUMBER := dbms_utility.get_time;
+  v_number  NUMBER(6,1) ;
+  v_varchar VARCHAR2(10);
+
+BEGIN
+
+  FOR i IN 1..rows_number
+  LOOP
+    SELECT ROUND(ABS(dbms_random.value(1000,5000))) num INTO v_number FROM dual;
+    SELECT dbms_random.string('U', 10) num INTO v_varchar FROM dual;
+    DBMS_OUTPUT.PUT_LINE(v_number || ' ' || v_varchar);
+    INSERT INTO JOBS VALUES (v_varchar, v_varchar, v_number, v_number);
+  END LOOP;
+
+  RETURN (dbms_utility.get_time - v_start_time);
+
+
+END;
+
+--**************************************************************************************************
+
+create or replace
+FUNCTION table_row_count (table_name IN varchar2)
+   RETURN NUMBER IS
+   total_size NUMBER(10);
+BEGIN
+  EXECUTE IMMEDIATE  'SELECT COUNT(*) FROM ' || table_name INTO total_size;
+   RETURN total_size;
+END;
+
+--**************************************************************************************************
+--Jakby co to mamy oddzielne funkcje dla każdej tabeli również. 
+create or replace
+FUNCTION WRITE_TABLE_DATA_TO_FILE (TABLE_NAME IN VARCHAR2, SEPARATOR IN VARCHAR2)
+RETURN NUMBER
+IS
+  fHandle UTL_FILE.FILE_TYPE;
+  v_start_time NUMBER := dbms_utility.get_time;
+-- COUNTRIES
+  v_countries_country_id countries.country_id%TYPE;
+  v_country_name countries.country_name%TYPE;
+  v_countries_region_id countries.region_id%TYPE;
+  CURSOR countries_row IS SELECT country_id, country_name, region_id FROM countries;
+--DEPARTMENTS
+  v_dep_department_id departments.department_id%TYPE;
+  v_department_name departments.department_name%TYPE;
+  v_dep_manager_id departments.manager_id%TYPE;
+  v_dep_location_id departments.location_id%TYPE;
+  CURSOR departments_row IS SELECT department_id, department_name, manager_id, location_id FROM departments;
+--EMPLOYEES
+  v_emp_employee_id employees.employee_id%TYPE;
+  v_first_name employees.first_name%TYPE;
+  v_last_name employees.last_name%TYPE;
+  v_email employees.email%TYPE;
+  v_phone_number employees.phone_number%TYPE;
+  v_hire_date employees.hire_date%TYPE;
+  v_emp_job_id employees.job_id%TYPE;
+  v_salary employees.salary%TYPE;
+  v_commission_pct employees.commission_pct%TYPE;
+  v_emp_manager_id employees.manager_id%TYPE;
+  v_emp_department_id employees.department_id%TYPE;
+  CURSOR employees_row IS
+    SELECT employee_id, first_name, last_name, email, phone_number, hire_date, job_id, salary, nvl(commission_pct, 0), manager_id, department_id FROM employees;
+--JOB_HISTORY
+  v_job_h_employee_id job_history.employee_id%TYPE;
+  v_start_date job_history.start_date%TYPE;
+  v_end_date job_history.end_date%TYPE;
+  v_job_h_job_id job_history.job_id%TYPE;
+  v_job_h_department_id job_history.department_id%TYPE;
+  CURSOR job_history_row IS SELECT employee_id, start_date, end_date, job_id, department_id from job_history;
+--JOBS
+  v_jobs_job_id jobs.job_id%TYPE;
+  v_job_title jobs.job_title%TYPE;
+  v_min_salary jobs.min_salary%TYPE;
+  v_max_salary jobs.max_salary%TYPE;
+  CURSOR jobs_row IS SELECT job_id, job_title, min_salary, max_salary from jobs;
+--LOCATIONS
+  v_locations_location_id locations.location_id%TYPE;
+  v_street_address locations.street_address%TYPE;
+  v_postal_code locations.postal_code%TYPE;
+  v_city locations.city%TYPE;
+  v_state_province locations.state_province%TYPE;
+  v_locations_country_id locations.country_id%TYPE;
+  CURSOR locations_row IS SELECT location_id, street_address, postal_code, city, state_province, country_id from locations;
+--REGIONS
+  v_regions_region_id regions.region_id%TYPE;
+  v_region_name regions.region_name%TYPE;
+  CURSOR regions_row IS SELECT region_id, region_name from regions;
+
+
+BEGIN
+  IF lower(table_name) = 'countries' THEN
+    fHandle := UTL_FILE.FOPEN('OUTPUT_DIR', 'test_file.txt', 'w');
+    OPEN countries_row;
+    LOOP
+      FETCH countries_row INTO v_countries_country_id, v_country_name, v_countries_region_id;
+      EXIT WHEN countries_row%NOTFOUND;
+      UTL_FILE.PUT_LINE(fHandle, v_countries_country_id ||separator|| v_country_name ||separator|| v_countries_region_id);
+     --DBMS_OUTPUT.PUT_LINE(v_countries_country_id ||separator|| v_country_name ||separator|| v_countries_region_id);
+    END LOOP;
+    CLOSE countries_row;
+    UTL_FILE.FCLOSE(fHandle);
+   RETURN (dbms_utility.get_time - v_start_time);
+
+  ELSIF lower(table_name) = 'departments' THEN
+    fHandle := UTL_FILE.FOPEN('OUTPUT_DIR', 'test_file.txt', 'w');
+    OPEN departments_row;
+    LOOP
+      FETCH departments_row INTO v_dep_department_id, v_department_name, v_dep_manager_id, v_dep_location_id;
+      EXIT WHEN departments_row%NOTFOUND;
+      UTL_FILE.PUT_LINE(fHandle, v_dep_department_id ||separator|| v_department_name ||separator|| v_dep_manager_id ||separator|| v_dep_location_id);
+    END LOOP;
+    CLOSE departments_row;
+    UTL_FILE.FCLOSE(fHandle);
+    RETURN (dbms_utility.get_time - v_start_time);
+
+  ELSIF lower(table_name) = 'employees' THEN
+    fHandle := UTL_FILE.FOPEN('OUTPUT_DIR', 'test_file.txt', 'w');
+    OPEN employees_row;
+    LOOP
+      FETCH employees_row INTO v_emp_employee_id, v_first_name, v_last_name, v_email, v_phone_number, v_hire_date, v_emp_job_id, v_salary, v_commission_pct, v_emp_manager_id, v_emp_department_id;
+      EXIT WHEN employees_row%NOTFOUND;
+      UTL_FILE.PUT_LINE(fHandle, v_emp_employee_id ||separator|| v_first_name ||separator|| v_last_name ||separator|| v_email ||separator|| v_phone_number ||separator|| v_hire_date
+                      ||separator|| v_emp_job_id ||separator||v_salary ||separator|| v_commission_pct ||separator|| v_emp_manager_id ||separator|| v_emp_department_id );
+    END LOOP;
+    CLOSE employees_row;
+    UTL_FILE.FCLOSE(fHandle);
+    RETURN (dbms_utility.get_time - v_start_time);
+
+  ELSIF lower(table_name) = 'job_history' THEN
+    fHandle := UTL_FILE.FOPEN('OUTPUT_DIR', 'test_file.txt', 'w');
+    OPEN job_history_row;
+    LOOP
+      FETCH job_history_row INTO v_job_h_employee_id, v_start_date, v_end_date, v_job_h_job_id, v_job_h_department_id;
+      EXIT
+      WHEN job_history_row%NOTFOUND;
+      UTL_FILE.PUT_LINE(fHandle, v_job_h_employee_id ||separator|| v_start_date ||separator|| v_end_date ||separator|| v_job_h_job_id ||separator|| v_job_h_department_id);
+    --DBMS_OUTPUT.PUT_LINE(v_job_h_employee_id ||separator|| v_start_date ||separator|| v_end_date ||separator|| v_job_h_job_id ||separator|| v_job_h_department_id);
+    END LOOP;
+    CLOSE job_history_row;
+    UTL_FILE.FCLOSE(fHandle);
+    RETURN (dbms_utility.get_time - v_start_time);
+
+  ELSIF lower(table_name) = 'jobs' THEN
+    fHandle := UTL_FILE.FOPEN('OUTPUT_DIR', 'test_file.txt', 'w');
+    OPEN jobs_row;
+    LOOP
+      FETCH jobs_row INTO v_jobs_job_id, v_job_title, v_min_salary, v_max_salary;
+      EXIT WHEN jobs_row%NOTFOUND;
+      UTL_FILE.PUT_LINE(fHandle, v_jobs_job_id ||separator|| v_job_title ||separator|| v_min_salary ||separator|| v_max_salary);
+      --DBMS_OUTPUT.PUT_LINE(v_jobs_job_id ||separator|| v_job_title ||separator|| v_min_salary ||separator|| v_max_salary);
+    END LOOP;
+    CLOSE jobs_row;
+    UTL_FILE.FCLOSE(fHandle);
+    RETURN (dbms_utility.get_time - v_start_time);
+
+  ELSIF lower(table_name) = 'locations' THEN
+    fHandle := UTL_FILE.FOPEN('OUTPUT_DIR', 'test_file.txt', 'w');
+    OPEN locations_row;
+    LOOP
+      FETCH locations_row INTO v_locations_location_id, v_street_address, v_postal_code, v_city, v_state_province, v_locations_country_id;
+      EXIT WHEN locations_row%NOTFOUND;
+      UTL_FILE.PUT_LINE(fHandle, v_locations_location_id ||separator|| v_street_address ||separator|| v_postal_code ||separator|| v_city ||separator|| v_state_province ||separator|| v_locations_country_id);
+    END LOOP;
+    CLOSE locations_row;
+    UTL_FILE.FCLOSE(fHandle);
+    RETURN (dbms_utility.get_time - v_start_time);
+
+  ELSIF lower(table_name) = 'regions' THEN
+    fHandle := UTL_FILE.FOPEN('OUTPUT_DIR', 'test_file.txt', 'w');
+    OPEN regions_row;
+    LOOP
+      FETCH regions_row INTO v_regions_region_id, v_region_name;
+      EXIT WHEN regions_row%NOTFOUND;
+      UTL_FILE.PUT_LINE(fHandle, v_regions_region_id ||separator|| v_region_name);
+      --DBMS_OUTPUT.PUT_LINE(v_regions_region_id ||separator|| v_region_name);
+    END LOOP;
+    CLOSE regions_row;
+    UTL_FILE.FCLOSE(fHandle);
+    RETURN (dbms_utility.get_time - v_start_time);
+
+  ELSE
+    DBMS_OUTPUT.PUT_LINE('No such table.');
+    RETURN -1;
+  END IF;
+
+
+END WRITE_TABLE_DATA_TO_FILE;
+
+--**************************************************************************************************
+

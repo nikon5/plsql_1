@@ -1,10 +1,6 @@
 package com.korczak.plsql1.spring;
 
-import com.korczak.plsql1.storedprocedures.TableInputRows;
-import com.korczak.plsql1.storedprocedures.TableCount;
-import com.korczak.plsql1.storedprocedures.TableDescription;
-import com.korczak.plsql1.storedprocedures.TableDescriptionSave;
-import com.korczak.plsql1.storedprocedures.TablesNames;
+import com.korczak.plsql1.storedprocedures.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,4 +39,8 @@ public class ControllersConfiguration {
         return new TableInputRows(dataSource);
     }
 
+    @Bean
+    public TableDataSave saveTableData() throws SQLException {
+        return new TableDataSave(dataSource);
+    }
 }

@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class TableDescriptionSave extends StoredProcedure {
 
-    private static final String WRITE_TO_FILE_PROCEDURE = "hr.write_to_file";
+    private static final String WRITE_TO_FILE_PROCEDURE = "hr.write_description_to_file";
 
     public TableDescriptionSave(DataSource dataSource) {
         super(dataSource, WRITE_TO_FILE_PROCEDURE);
