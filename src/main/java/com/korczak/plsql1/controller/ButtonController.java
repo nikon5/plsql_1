@@ -38,6 +38,12 @@ public class ButtonController extends GenericController {
     private TextField howManyRows;
 
     @FXML
+    private TextField insertTime;
+
+    @FXML
+    private TextField saveTime;
+
+    @FXML
     private TableView tableDescription;
 
     private final TableColumn nameColumn = new TableColumn("Name");
@@ -119,8 +125,8 @@ public class ButtonController extends GenericController {
             howMany = Integer.parseInt(howManyRows.getText());
             TableInputRows procedure = applicationContext.getBean(TableInputRows.class);
             if (howMany>0){
-                BigDecimal a=procedure.execute(howMany);
-                System.out.println(a);
+                BigDecimal insertTimeValue=procedure.execute(howMany);
+                insertTime.setText(insertTimeValue.toString()+" [ms]");
             }
             Scene dialogScene = new Scene(VBoxBuilder.create()
                     .children(new Text("Do you want to commit your changes?"), noButton, yesButton)
@@ -195,7 +201,9 @@ public class ButtonController extends GenericController {
 
         TableDataSave procedure = applicationContext.getBean(TableDataSave.class);
         BigDecimal timeElapsed = procedure.execute(selectedTableName, DEFAULT_SEPARATOR);  //TODO: SEPARATOR MUST BE REAL PARAMETER - READ FROM USER
+        String result = Float.parseFloat(timeElapsed.toString()) / 10 + "[ms]";
         System.out.println("Persisting " + selectedTableName + " data to file takes: " + Float.parseFloat(timeElapsed.toString()) / 10 + "[ms]");
+        saveTime.setText(result);
     }
 
     private void addHader() {

@@ -13,11 +13,11 @@
         <Button fx:id="getTableNamesButton" onAction="#onGetTableNamesAction" layoutX="6.0" layoutY="333.0" mnemonicParsing="false"
                 prefHeight="25.0" prefWidth="200.0" text="Get names"/>
 
-        <TextArea fx:id="countText" layoutX="215.0" layoutY="30.0" prefHeight="15.0" prefWidth="375.0"/>
+        <TextArea disable="true" fx:id="countText" layoutX="215.0" layoutY="30.0" prefHeight="15.0" prefWidth="375.0"/>
 
-        <!--<Button fx:id="saveDescriptionToFileButton" onAction="#onTableDescriptionSaveAction" layoutX="220.0" layoutY="333.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0"-->
-                <!--text="Save description to file"/>-->
-        <Button fx:id="saveDataToFileButton" onAction="#onTableDataSaveAction" layoutX="220.0" layoutY="333.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0"
+        <Button fx:id="saveDescriptionToFileButton" onAction="#onTableDescriptionSaveAction" layoutX="220.0" layoutY="333.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0"
+                text="Save description to file"/>
+        <Button fx:id="saveDataToFileButton" onAction="#onTableDataSaveAction" layoutX="220.0" layoutY="361.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0"
                 text="Save data to file"/>
 
         <TableView fx:id="tableDescription" layoutX="215.0" layoutY="85.0" prefHeight="242.0" prefWidth="376.0"/>
@@ -25,8 +25,13 @@
 
         <Label layoutX="211.0" layoutY="14.0" text="Rowcount:"/>
         <Label layoutX="215.0" layoutY="70.0" text="Description:"/>
-        <Button fx:id="inputNewRows" onAction="#onInsertRows" layoutX="7.0" layoutY="361.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="200.0" text="Insert rows" />
-        <TextField fx:id="howManyRows" layoutX="320.0" layoutY="361.0" prefHeight="27.0" prefWidth="275.0" />
-        <Label layoutX="226.0" layoutY="366.0" text="Number of rows" />
+        <Button fx:id="inputNewRows" onAction="#onInsertRows" layoutX="220.0" layoutY="389.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Insert rows" />
+
+        <TextField fx:id="howManyRows" layoutX="417.0" layoutY="389.0" prefHeight="27.0" prefWidth="32.0"/>
+        <Label layoutX="350.0" layoutY="392.0" text="No of rows:" />
+        <Label layoutX="460.0" layoutY="392.0" text="Insert time:" />
+        <Label layoutX="350.0" layoutY="365.0" text="Save time:" />
+        <TextField disable="true" fx:id="saveTime" layoutX="417.0" layoutY="361.0" prefHeight="25.0" prefWidth="67.0" />
+        <TextField disable="true" fx:id="insertTime" layoutX="524.0" layoutY="389.0" prefHeight="25.0" prefWidth="67.0" />
     </children>
 </Pane>

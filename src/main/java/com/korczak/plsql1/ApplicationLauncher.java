@@ -18,7 +18,7 @@ public class ApplicationLauncher extends Application {
 
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("main-window.fxml"));
         primaryStage.setTitle("PL/SQL Viewer");
-        Scene scene = new Scene(root, 600, 390);
+        Scene scene = new Scene(root, 600, 420);
         scene.getStylesheets().add("main.css");
         primaryStage.setScene(scene);
         primaryStage.show();
