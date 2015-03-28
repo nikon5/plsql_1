@@ -35,8 +35,8 @@ public class ControllersConfiguration {
     }
 
     @Bean
-    public TableInputRows getTablesRows() throws SQLException {
-        return new TableInputRows(dataSource);
+    public TableInsertRows getTablesRows() throws SQLException {
+        return new TableInsertRows(dataSource);
     }
 
     @Bean

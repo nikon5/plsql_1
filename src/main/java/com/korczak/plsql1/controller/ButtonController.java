@@ -1,7 +1,9 @@
 package com.korczak.plsql1.controller;
 
-import com.korczak.plsql1.storedprocedures.*;
+import com.korczak.plsql1.controller.transactionalevents.CommitEventHandler;
+import com.korczak.plsql1.controller.transactionalevents.RollbackEventHandler;
 import com.korczak.plsql1.spring.DatabaseConfiguration;
+import com.korczak.plsql1.storedprocedures.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -59,21 +61,18 @@ public class ButtonController extends GenericController {
 
         TablesNames tableNamesProcedure = applicationContext.getBean(TablesNames.class);
 
-
         String allTableNames = tableNamesProcedure.execute();
         String[] splittedTableNames = allTableNames.split(",");
-
 
         ObservableList<String> items = FXCollections.observableArrayList(splittedTableNames);
         listOfTablesNames.setItems(items);
     }
 
     public void onInsertRows(Event e) {
-        if (howManyRows.getText().length() == 0 ) {
+        if (howManyRows.getText().length() == 0) {
             setRed(howManyRows);
             return;
-        }
-        else {
+        } else {
             removeRed(howManyRows);
         }
         final Stage dialog = new Stage();
@@ -81,7 +80,7 @@ public class ButtonController extends GenericController {
 
 
         Button okButton = new Button("Ok");
-        okButton.setOnAction(new EventHandler<ActionEvent>(){
+        okButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent arg0) {
@@ -89,68 +88,56 @@ public class ButtonController extends GenericController {
             }
 
         });
-        Button noButton = new Button("No");
-        noButton.setOnAction(new EventHandler<ActionEvent>(){
 
-            @Override
-            public void handle(ActionEvent arg0) {
-                try {
-                    DataSource ds = (DataSource)applicationContext.getBean(DatabaseConfiguration.class).getDataSource();
-                    Connection c = ds.getConnection();
-                    c.rollback();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
-                dialog.close();
-            }
-
-        });
-        Button yesButton = new Button("Yes");
-        yesButton.setOnAction(new EventHandler<ActionEvent>(){
-
-            @Override
-            public void handle(ActionEvent arg0) {
-                try {
-                    DataSource ds = (DataSource)applicationContext.getBean(DatabaseConfiguration.class).getDataSource();
-                    Connection c = ds.getConnection();
-                    c.commit();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
-                dialog.close();
-            }
-        });
-        int howMany;
+        DataSource dataSource = null;
         try {
-            howMany = Integer.parseInt(howManyRows.getText());
-            TableInputRows procedure = applicationContext.getBean(TableInputRows.class);
-            if (howMany>0){
-                BigDecimal insertTimeValue=procedure.execute(howMany);
-                insertTime.setText(insertTimeValue.toString() + " [ms]");
+            dataSource = applicationContext.getBean(DatabaseConfiguration.class).getDataSource();
+            Connection connection = dataSource.getConnection();
+            connection.setAutoCommit(false);
+            Button commitButton = new Button("Commit");
+            commitButton.setOnAction(new CommitEventHandler(connection, dialog));
+            Button rollbackButton = new Button("Rollback");
+            rollbackButton.setOnAction(new RollbackEventHandler(connection, dialog));
+
+            int howMany;
+            try {
+                howMany = Integer.parseInt(howManyRows.getText());
+                TableInsertRows tableInsertRowsProcedure = applicationContext.getBean(TableInsertRows.class);
+                if (howMany > 0) {
+                    BigDecimal insertTimeValue = tableInsertRowsProcedure.execute(howMany);
+                    insertTime.setText(insertTimeValue.toString() + " [ms]");
+                }
+                commitRollbackWindow(dialog, commitButton, rollbackButton);
+
+            } catch (NumberFormatException ex) {
+                howMany = 0;
+                Scene dialogScene = new Scene(VBoxBuilder.create()
+                        .children(new Text("Provide number"), okButton)
+                        .alignment(Pos.CENTER)
+                        .padding(new Insets(10))
+                        .build());
+                dialog.setScene(dialogScene);
+                dialog.show();
             }
-            Scene dialogScene = new Scene(VBoxBuilder.create()
-                    .children(new Text("Do you want to commit your changes?"), noButton, yesButton)
-                    .alignment(Pos.CENTER)
-                    .padding(new Insets(10))
-                    .build());
-            dialog.setScene(dialogScene);
-            dialog.show();
-        } catch (NumberFormatException ex){
-            howMany = 0;
-            Scene dialogScene = new Scene(VBoxBuilder.create()
-                    .children(new Text("Provide number"), okButton)
-                    .alignment(Pos.CENTER)
-                    .padding(new Insets(10))
-                    .build());
-            dialog.setScene(dialogScene);
-            dialog.show();
+        } catch (SQLException sqlException) {
+            sqlException.printStackTrace();
         }
+    }
+
+    private void commitRollbackWindow(Stage dialog, Button commitButton, Button rollbackButton) {
+        Scene dialogScene = new Scene(VBoxBuilder.create()
+                .children(new Text("Do you want to commit your changes?"), rollbackButton, commitButton)
+                .alignment(Pos.CENTER)
+                .padding(new Insets(10))
+                .build());
+        dialog.setScene(dialogScene);
+        dialog.show();
     }
 
     private void setRed(TextField textField) {
         ObservableList<String> styleClass = textField.getStyleClass();
 
-        if(!styleClass.contains("tferror")) {
+        if (!styleClass.contains("tferror")) {
             styleClass.add("tferror");
         }
     }
@@ -176,13 +163,13 @@ public class ButtonController extends GenericController {
             String[] rows = tableDesc.split(",");
 
             ObservableList<DescriptionRow> descriptionTableList = FXCollections.observableArrayList();
-                for(String row : rows){
-                    String[] cells = row.split(":");
+            for (String row : rows) {
+                String[] cells = row.split(":");
                 if (cells[1].equals("empty")) {
                     cells[1] = "";
                 }
                 descriptionTableList.add(new DescriptionRow(cells[0], cells[1], cells[2]));
-                if(rowCounter == 0) {
+                if (rowCounter == 0) {
                     addHader();
                 }
                 rowCounter++;
@@ -197,25 +184,24 @@ public class ButtonController extends GenericController {
         procedure.execute(selectedTableName);
     }
 
-    public void onTableDataSaveAction (Event e){
+    public void onTableDataSaveAction(Event e) {
         TableDataSave procedure = applicationContext.getBean(TableDataSave.class);
         final Stage dialog = new Stage();
         dialog.initModality(Modality.WINDOW_MODAL);
         TextField separatorTextField = new TextField();
         separatorTextField.setText(DEFAULT_SEPARATOR);
         Button okButton = new Button("Ok");
-        okButton.setOnAction(new EventHandler<ActionEvent>(){
+        okButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent arg0) {
-                if (separatorTextField.getText().length()>0) {
+                if (separatorTextField.getText().length() > 0) {
 
                     BigDecimal timeElapsed = procedure.execute(selectedTableName, separatorTextField.getText().toString());  //TODO: SEPARATOR MUST BE REAL PARAMETER - READ FROM USER
                     String result = Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]";
                     System.out.println("Persisting " + selectedTableName + " data to file takes: " + Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]");
                     saveTime.setText(result);
-                }
-                else {
+                } else {
                     BigDecimal timeElapsed = procedure.execute(selectedTableName, DEFAULT_SEPARATOR);  //TODO: SEPARATOR MUST BE REAL PARAMETER - READ FROM USER
                     String result = Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]";
                     System.out.println("Persisting " + selectedTableName + " data to file takes: " + Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]");
@@ -226,7 +212,7 @@ public class ButtonController extends GenericController {
 
         });
         Button closeButton = new Button("Close");
-        closeButton.setOnAction(new EventHandler<ActionEvent>(){
+        closeButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent arg0) {

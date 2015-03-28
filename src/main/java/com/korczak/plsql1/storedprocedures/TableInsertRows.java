@@ -10,11 +10,11 @@ import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TableInputRows extends StoredProcedure {
+public class TableInsertRows extends StoredProcedure {
 
     private static final String INSERT_INTO_JOBS_TABLE_FUNCTION = "hr.insert_jobs_rows";
 
-    public TableInputRows(DataSource dataSource) {
+    public TableInsertRows(DataSource dataSource) {
         super(dataSource, INSERT_INTO_JOBS_TABLE_FUNCTION);
         declareParameter(new SqlOutParameter("time_elapsed", Types.NUMERIC));
         declareParameter(new SqlParameter("rows_number", Types.NUMERIC));
