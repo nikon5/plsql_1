@@ -78,50 +78,15 @@ public class ButtonController extends GenericController {
         final Stage dialog = new Stage();
         dialog.initModality(Modality.WINDOW_MODAL);
 
+        commitRollbackWindow(dialog);
+    }
 
-        Button okButton = new Button("Ok");
-        okButton.setOnAction(new EventHandler<ActionEvent>() {
+    private void commitRollbackWindow(Stage dialog) {
 
-            @Override
-            public void handle(ActionEvent arg0) {
-                dialog.close();
-            }
-
-        });
-
-        DataSource dataSource = null;
-        try {
-            dataSource = applicationContext.getBean(DatabaseConfiguration.class).getDataSource();
-            Connection connection = dataSource.getConnection();
-            connection.setAutoCommit(false);
-            Button commitButton = new Button("Commit");
-            commitButton.setOnAction(new CommitEventHandler(connection, dialog));
-            Button rollbackButton = new Button("Rollback");
-            rollbackButton.setOnAction(new RollbackEventHandler(connection, dialog));
-
-            int howMany;
-            try {
-                howMany = Integer.parseInt(howManyRows.getText());
-                TableInsertRows tableInsertRowsProcedure = applicationContext.getBean(TableInsertRows.class);
-                if (howMany > 0) {
-                    BigDecimal insertTimeValue = tableInsertRowsProcedure.execute(howMany);
-                    insertTime.setText(insertTimeValue.toString() + " [ms]");
-                }
-                commitRollbackWindow(dialog, commitButton, rollbackButton);
-
-            } catch (NumberFormatException ex) {
-                howMany = 0;
-                Scene dialogScene = new Scene(VBoxBuilder.create()
-                        .children(new Text("Provide number"), okButton)
-                        .alignment(Pos.CENTER)
-                        .padding(new Insets(10))
-                        .build());
-                dialog.setScene(dialogScene);
-                dialog.show();
-            }
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
-        }
+        Button commitButton = new Button("Commit");
+        commitButton.setOnAction(new CommitEventHandler(applicationContext, dialog, howManyRows, insertTime));
+        Button rollbackButton = new Button("Rollback");
+        rollbackButton.setOnAction(new RollbackEventHandler(dialog));
     }
 
     public void onSaveData2(Event e) {
@@ -156,16 +121,6 @@ public class ButtonController extends GenericController {
         });
         Scene dialogScene = new Scene(VBoxBuilder.create()
                 .children(new Text("Provide separator (Default ;)"), separatorTextField, okButton, closeButton)
-                .padding(new Insets(10))
-                .build());
-        dialog.setScene(dialogScene);
-        dialog.show();
-    }
-
-    private void commitRollbackWindow(Stage dialog, Button commitButton, Button rollbackButton) {
-        Scene dialogScene = new Scene(VBoxBuilder.create()
-                .children(new Text("Do you want to commit your changes?"), rollbackButton, commitButton)
-                .alignment(Pos.CENTER)
                 .padding(new Insets(10))
                 .build());
         dialog.setScene(dialogScene);

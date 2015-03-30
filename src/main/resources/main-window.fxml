@@ -25,7 +25,7 @@
 
         <Label layoutX="211.0" layoutY="14.0" text="Rowcount:"/>
         <Label layoutX="215.0" layoutY="70.0" text="Description:"/>
-        <Button fx:id="inputNewRows" onAction="#onInsertRows" layoutX="220.0" layoutY="389.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Insert rows" />
+        <Button fx:id="inputNewRows" onAction="#onInsertRows" layoutX="220.0" layoutY="389.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="125.0" text="Insert jobs rows" />
 
         <TextField fx:id="howManyRows" layoutX="417.0" layoutY="389.0" prefHeight="27.0" prefWidth="32.0"/>
         <Label layoutX="350.0" layoutY="392.0" text="No of rows:" />

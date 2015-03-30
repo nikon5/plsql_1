@@ -4,27 +4,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 public class RollbackEventHandler implements EventHandler<ActionEvent> {
 
     private Stage dialog;
-    private Connection connection;
 
-    public RollbackEventHandler(Connection connection, Stage dialog) {
-        this.connection = connection;
+    public RollbackEventHandler(Stage dialog) {
         this.dialog = dialog;
     }
 
     @Override
     public void handle(ActionEvent arg0) {
-        try {
-            connection.rollback();
-        } catch (SQLException sqlException) {
-            sqlException.printStackTrace();
-        } finally {
-            dialog.close();
-        }
+        dialog.close();
     }
 }

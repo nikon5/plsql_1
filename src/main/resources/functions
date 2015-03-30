@@ -259,4 +259,16 @@ BEGIN
 END WRITE_TABLE_DATA_TO_FILE;
 
 --**************************************************************************************************
+-------
+TASK 2:
+-------
+1.
+CREATE TABLE countries_bckp AS (SELECT * FROM countries WHERE 1=2);
+CREATE TABLE departments_bckp AS (SELECT * FROM departments WHERE 1=2);
+CREATE TABLE employees_bckp AS (SELECT * FROM employees WHERE 1=2);
+CREATE TABLE job_history_bckp AS (SELECT * FROM job_history WHERE 1=2);
+CREATE TABLE jobs_bckp AS (SELECT * FROM jobs WHERE 1=2);
+CREATE TABLE locations_bckp AS (SELECT * FROM locations WHERE 1=2);
+CREATE TABLE regions_bckp AS (SELECT * FROM regions WHERE 1=2);
 
+2.
