@@ -137,15 +137,9 @@ public class ButtonController extends GenericController {
             public void handle(ActionEvent arg0) {
                 if (separatorTextField.getText().length() > 0) {
 
-                    BigDecimal timeElapsed = procedure.execute(selectedTableName, separatorTextField.getText().toString());  //TODO: SEPARATOR MUST BE REAL PARAMETER - READ FROM USER
-                    String result = Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]";
-                    System.out.println("Persisting " + selectedTableName + " data to file takes: " + Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]");
-                    saveTime.setText(result);
+                    procedure.execute(selectedTableName, separatorTextField.getText().toString());
                 } else {
-                    BigDecimal timeElapsed = procedure.execute(selectedTableName, DEFAULT_SEPARATOR);  //TODO: SEPARATOR MUST BE REAL PARAMETER - READ FROM USER
-                    String result = Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]";
-                    System.out.println("Persisting " + selectedTableName + " data to file takes: " + Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]");
-                    saveTime.setText(result);
+                    procedure.execute(selectedTableName, DEFAULT_SEPARATOR);
                 }
                 dialog.close();
             }
