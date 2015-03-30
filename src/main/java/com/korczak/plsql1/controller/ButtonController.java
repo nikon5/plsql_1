@@ -124,6 +124,50 @@ public class ButtonController extends GenericController {
         }
     }
 
+    public void onSaveData2(Event e) {
+        TableDataSave procedure = applicationContext.getBean(TableDataSave.class);
+        final Stage dialog = new Stage();
+        dialog.initModality(Modality.WINDOW_MODAL);
+        TextField separatorTextField = new TextField();
+        separatorTextField.setText(DEFAULT_SEPARATOR);
+        Button okButton = new Button("Ok");
+        okButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent arg0) {
+                if (separatorTextField.getText().length() > 0) {
+
+                    BigDecimal timeElapsed = procedure.execute(selectedTableName, separatorTextField.getText().toString());  //TODO: SEPARATOR MUST BE REAL PARAMETER - READ FROM USER
+                    String result = Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]";
+                    System.out.println("Persisting " + selectedTableName + " data to file takes: " + Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]");
+                    saveTime.setText(result);
+                } else {
+                    BigDecimal timeElapsed = procedure.execute(selectedTableName, DEFAULT_SEPARATOR);  //TODO: SEPARATOR MUST BE REAL PARAMETER - READ FROM USER
+                    String result = Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]";
+                    System.out.println("Persisting " + selectedTableName + " data to file takes: " + Float.parseFloat(timeElapsed.toString()) / 10 + " [ms]");
+                    saveTime.setText(result);
+                }
+                dialog.close();
+            }
+
+        });
+        Button closeButton = new Button("Close");
+        closeButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent arg0) {
+                dialog.close();
+            }
+
+        });
+        Scene dialogScene = new Scene(VBoxBuilder.create()
+                .children(new Text("Provide separator (Default ;)"), separatorTextField, okButton, closeButton)
+                .padding(new Insets(10))
+                .build());
+        dialog.setScene(dialogScene);
+        dialog.show();
+    }
+
     private void commitRollbackWindow(Stage dialog, Button commitButton, Button rollbackButton) {
         Scene dialogScene = new Scene(VBoxBuilder.create()
                 .children(new Text("Do you want to commit your changes?"), rollbackButton, commitButton)
