@@ -42,14 +42,13 @@ public class CommitEventHandler implements EventHandler<ActionEvent> {
                     insertTime.setText(insertTimeValue.toString() + " [ms]");
                 }
 
-            } catch (NumberFormatException ex) {
-                Scene dialogScene = new Scene(VBoxBuilder.create()
+        } catch (NumberFormatException ex) {
+            Scene dialogScene = new Scene(VBoxBuilder.create()
                         .children(new Text("Provide number"), buildOKButton())
                         .alignment(Pos.CENTER)
                         .padding(new Insets(10))
                         .build());
-                dialog.setScene(dialogScene);
-                dialog.show();
+            dialog.setScene(dialogScene);
             }
         dialog.close();
     }

@@ -87,6 +87,14 @@ public class ButtonController extends GenericController {
         commitButton.setOnAction(new CommitEventHandler(applicationContext, dialog, howManyRows, insertTime));
         Button rollbackButton = new Button("Rollback");
         rollbackButton.setOnAction(new RollbackEventHandler(dialog));
+
+        Scene dialogScene = new Scene(VBoxBuilder.create()
+                .children(new Text("Do you want to commit your changes?"), rollbackButton, commitButton)
+                .alignment(Pos.CENTER)
+                .padding(new Insets(10))
+                .build());
+        dialog.setScene(dialogScene);
+        dialog.show();
     }
 
     public void onSaveData2(Event e) {
@@ -121,6 +129,16 @@ public class ButtonController extends GenericController {
         });
         Scene dialogScene = new Scene(VBoxBuilder.create()
                 .children(new Text("Provide separator (Default ;)"), separatorTextField, okButton, closeButton)
+                .padding(new Insets(10))
+                .build());
+        dialog.setScene(dialogScene);
+        dialog.show();
+    }
+
+    private void commitRollbackWindow(Stage dialog, Button commitButton, Button rollbackButton) {
+        Scene dialogScene = new Scene(VBoxBuilder.create()
+                .children(new Text("Do you want to commit your changes?"), rollbackButton, commitButton)
+                .alignment(Pos.CENTER)
                 .padding(new Insets(10))
                 .build());
         dialog.setScene(dialogScene);
