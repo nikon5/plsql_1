@@ -135,6 +135,63 @@ public class ButtonController extends GenericController {
         dialog.show();
     }
 
+    public void onLoadFromBck(Event e) {
+        TableDataSave procedure = applicationContext.getBean(TableDataSave.class);
+        final Stage dialog = new Stage();
+        dialog.initModality(Modality.WINDOW_MODAL);
+        TextField sizeOfCommit = new TextField();
+        Button okButton = new Button("Ok");
+        okButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent arg0) {
+                if (sizeOfCommit.getText().length() > 0) {
+                    try {
+                        Integer.parseInt(sizeOfCommit.getText());
+                    }catch (NumberFormatException e) {
+                        final Stage dialog1 = new Stage();
+                        dialog1.initModality(Modality.WINDOW_MODAL);
+                        Button closeButton1 = new Button("Close");
+                        closeButton1.setOnAction(new EventHandler<ActionEvent>() {
+
+                            @Override
+                            public void handle(ActionEvent arg0) {
+                                dialog1.close();
+                            }
+
+                        });
+                        Scene dialogScene = new Scene(VBoxBuilder.create()
+                                .children(new Text("Provide proper value (number)"), closeButton1)
+                                .padding(new Insets(10))
+                                .build());
+                        dialog1.setScene(dialogScene);
+                        dialog1.show();
+                    }
+                    //procedure.execute(selectedTableName, sizeOfCommit.getText().toString());
+                } else {
+                    //procedure.execute(selectedTableName, DEFAULT_SEPARATOR);
+                }
+                dialog.close();
+            }
+
+        });
+        Button closeButton = new Button("Close");
+        closeButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent arg0) {
+                dialog.close();
+            }
+
+        });
+        Scene dialogScene = new Scene(VBoxBuilder.create()
+                .children(new Text("Size of commit"), sizeOfCommit, okButton, closeButton)
+                .padding(new Insets(10))
+                .build());
+        dialog.setScene(dialogScene);
+        dialog.show();
+    }
+
     private void commitRollbackWindow(Stage dialog, Button commitButton, Button rollbackButton) {
         Scene dialogScene = new Scene(VBoxBuilder.create()
                 .children(new Text("Do you want to commit your changes?"), rollbackButton, commitButton)
