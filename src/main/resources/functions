@@ -271,4 +271,30 @@ CREATE TABLE jobs_bckp AS (SELECT * FROM jobs WHERE 1=2);
 CREATE TABLE locations_bckp AS (SELECT * FROM locations WHERE 1=2);
 CREATE TABLE regions_bckp AS (SELECT * FROM regions WHERE 1=2);
 
+DROP TABLE countries_bckp;
+DROP TABLE departments_bckp;
+DROP TABLE employees_bckp;
+DROP TABLE job_history_bckp;
+DROP TABLE jobs_bckp;
+DROP TABLE locations_bckp;
+DROP TABLE regions_bckp;
+
+create sequence regions_seq
+Start with 5
+Increment by 1
+nocache
+nocycle;
+
+create sequence countries_seq
+Start with 1
+Increment by 1
+nocache
+nocycle;
+
+create sequence jobs_seq
+Start with 1
+Increment by 1
+nocache
+nocycle;
+
 2.
