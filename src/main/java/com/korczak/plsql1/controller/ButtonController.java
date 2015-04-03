@@ -54,7 +54,7 @@ public class ButtonController extends GenericController {
     private int rowCounter = 0;
 
     private String selectedTableName = null;
-    private final static String DEFAULT_SEPARATOR = ";"; //TODO: MUST FIX IT
+    private final static String DEFAULT_SEPARATOR = ";";
 
 
     public void onGetTableNamesAction(Event e) {
@@ -69,6 +69,7 @@ public class ButtonController extends GenericController {
     }
 
     public void onInsertRows(Event e) {
+
         if (howManyRows.getText().length() == 0) {
             setRed(howManyRows);
             return;
@@ -97,8 +98,9 @@ public class ButtonController extends GenericController {
         dialog.show();
     }
 
-    public void onSaveData2(Event e) {
-        TableDataSave procedure = applicationContext.getBean(TableDataSave.class);
+    public void onSaveDataToFileProc(Event e) {
+
+        TableDataSaveProc procedure = applicationContext.getBean(TableDataSaveProc.class);
         final Stage dialog = new Stage();
         dialog.initModality(Modality.WINDOW_MODAL);
         TextField separatorTextField = new TextField();
@@ -108,9 +110,9 @@ public class ButtonController extends GenericController {
 
             @Override
             public void handle(ActionEvent arg0) {
-                if (separatorTextField.getText().length() > 0) {
+                if (!separatorTextField.getText().isEmpty()) {
 
-                    procedure.execute(selectedTableName, separatorTextField.getText().toString());
+                    procedure.execute(selectedTableName, separatorTextField.getText());
                 } else {
                     procedure.execute(selectedTableName, DEFAULT_SEPARATOR);
                 }
@@ -128,14 +130,14 @@ public class ButtonController extends GenericController {
 
         });
         Scene dialogScene = new Scene(VBoxBuilder.create()
-                .children(new Text("Provide separator (Default ;)"), separatorTextField, okButton, closeButton)
+                .children(new Text("Provide a separator (default is ; )"), separatorTextField, okButton, closeButton)
                 .padding(new Insets(10))
                 .build());
         dialog.setScene(dialogScene);
         dialog.show();
     }
 
-    public void onLoadFromBck(Event e) {
+    public void onLoadFromBckp(Event e) {
         TableDataSave procedure = applicationContext.getBean(TableDataSave.class);
         final Stage dialog = new Stage();
         dialog.initModality(Modality.WINDOW_MODAL);

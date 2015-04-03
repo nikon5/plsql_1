@@ -30,7 +30,7 @@ public class ControllersConfiguration {
     }
 
     @Bean
-    public TableDescriptionSave saveTableDesc() throws SQLException {
+    public TableDescriptionSave getSaveTableDesc() throws SQLException {
         return new TableDescriptionSave(dataSource);
     }
 
@@ -40,7 +40,12 @@ public class ControllersConfiguration {
     }
 
     @Bean
-    public TableDataSave saveTableData() throws SQLException {
+    public TableDataSave getSaveTableData() throws SQLException {
         return new TableDataSave(dataSource);
+    }
+
+    @Bean
+    public TableDataSaveProc getSaveTableDataProc() throws SQLException {
+        return new TableDataSaveProc(dataSource);
     }
 }

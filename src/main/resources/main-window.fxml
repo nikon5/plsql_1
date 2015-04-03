@@ -33,7 +33,7 @@
         <Label layoutX="350.0" layoutY="365.0" text="Save time:" />
         <TextField disable="true" fx:id="saveTime" layoutX="417.0" layoutY="361.0" prefHeight="25.0" prefWidth="67.0" />
         <TextField disable="true" fx:id="insertTime" layoutX="524.0" layoutY="389.0" prefHeight="25.0" prefWidth="67.0" />
-        <Button onAction="#onSaveData2" layoutX="220.0" layoutY="416.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0" text="Save data to file (2)" />
-        <Button onAction="#onLoadFromBck" layoutX="221.0" layoutY="443.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0" text="Load data from bck table" />
+        <Button onAction="#onSaveDataToFileProc" layoutX="220.0" layoutY="416.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0" text="Save data to file proc" />
+        <Button onAction="#onLoadFromBckp" layoutX="221.0" layoutY="443.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0" text="Load data from bck table" />
     </children>
 </Pane>
