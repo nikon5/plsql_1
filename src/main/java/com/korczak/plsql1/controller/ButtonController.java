@@ -18,14 +18,20 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import javax.sql.DataSource;
+import javax.xml.transform.sax.SAXSource;
+import java.io.File;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
+
+import static javafx.stage.FileChooser.*;
 
 
 public class ButtonController extends GenericController {
@@ -55,6 +61,7 @@ public class ButtonController extends GenericController {
 
     private String selectedTableName = null;
     private final static String DEFAULT_SEPARATOR = ";";
+    private File loadDataToFileName;
 
 
     public void onGetTableNamesAction(Event e) {
@@ -137,46 +144,60 @@ public class ButtonController extends GenericController {
         dialog.show();
     }
 
-    public void onLoadFromBckp(Event e) {
-        TableDataSave procedure = applicationContext.getBean(TableDataSave.class);
+    public void onLoadDataFromFileToBackupTable(Event e) {
+        LoadDataFromFileToBackupTable procedure = applicationContext.getBean(LoadDataFromFileToBackupTable.class);
+        loadDataToFileName = null;
         final Stage dialog = new Stage();
         dialog.initModality(Modality.WINDOW_MODAL);
-        TextField sizeOfCommit = new TextField();
-        Button okButton = new Button("Ok");
-        okButton.setOnAction(new EventHandler<ActionEvent>() {
+//        TextField sizeOfCommit = new TextField();
+        TextField separatorField = new TextField();
+        separatorField.setText(DEFAULT_SEPARATOR);
+
+        Button fileChooserButton = new Button("Choose file...");
+        fileChooserButton.setOnAction(new EventHandler<ActionEvent>() {
 
             @Override
             public void handle(ActionEvent arg0) {
-                if (sizeOfCommit.getText().length() > 0) {
-                    try {
-                        Integer.parseInt(sizeOfCommit.getText());
-                    }catch (NumberFormatException e) {
-                        final Stage dialog1 = new Stage();
-                        dialog1.initModality(Modality.WINDOW_MODAL);
-                        Button closeButton1 = new Button("Close");
-                        closeButton1.setOnAction(new EventHandler<ActionEvent>() {
 
-                            @Override
-                            public void handle(ActionEvent arg0) {
-                                dialog1.close();
-                            }
+                FileChooser fileChooser = new FileChooser();
+                FileChooser.ExtensionFilter txtFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+                FileChooser.ExtensionFilter csvFilter = new FileChooser.ExtensionFilter("CSV files (*.csv)", "*.csv");
+                fileChooser.getExtensionFilters().add(txtFilter);
+                fileChooser.getExtensionFilters().add(csvFilter);
+                fileChooser.setInitialDirectory(new File("C:\\oracle_save_file"));
 
-                        });
-                        Scene dialogScene = new Scene(VBoxBuilder.create()
-                                .children(new Text("Provide proper value (number)"), closeButton1)
-                                .padding(new Insets(10))
-                                .build());
-                        dialog1.setScene(dialogScene);
-                        dialog1.show();
-                    }
-                    //procedure.execute(selectedTableName, sizeOfCommit.getText().toString());
-                } else {
-                    //procedure.execute(selectedTableName, DEFAULT_SEPARATOR);
+                loadDataToFileName = fileChooser.showOpenDialog(null);
+            }
+
+        });
+        Button okButton = new Button("Ok");
+        okButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            public static final String FILE_DIR = "OUTPUT_DIR";
+
+            @Override
+            public void handle(ActionEvent arg0) {
+
+                String trimmedFileName = loadDataToFileName.getName().split("\\.")[0];
+                if (loadDataToFileName != null && !selectedTableName.toUpperCase().equals(trimmedFileName.toUpperCase() + "_BCKP")) {
+                    //skaswany plik(nie wybrany żaden), wybrana tabela oryginalna(nie ma _bckp w nazwie),
+                    System.out.println("//TODO: RODZYN NAWYWIJAŁ - SKASOWAŁ PLIK ALBO INNE KWIATY! ERROR WINDOW !");
+                    dialog.close();
+                    return;
                 }
+
+                BigDecimal numberOfInserts = BigDecimal.ZERO;
+                    String separator = separatorField.getText();
+                    if(separator.isEmpty()){
+                        separator = DEFAULT_SEPARATOR;
+                    }
+                    numberOfInserts = procedure.execute(FILE_DIR, loadDataToFileName.getName(), selectedTableName, separator);
+                    System.out.println(numberOfInserts);
                 dialog.close();
             }
 
         });
+
         Button closeButton = new Button("Close");
         closeButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -186,15 +207,16 @@ public class ButtonController extends GenericController {
             }
 
         });
+
         Scene dialogScene = new Scene(VBoxBuilder.create()
-                .children(new Text("Size of commit"), sizeOfCommit, okButton, closeButton)
-                .padding(new Insets(10))
+                .children(/*new Text("Size of commit"), sizeOfCommit,*/ new Text("Separator"), separatorField, okButton, fileChooserButton, closeButton)
+                .padding(new Insets(14))
                 .build());
         dialog.setScene(dialogScene);
         dialog.show();
     }
 
-    private void commitRollbackWindow(Stage dialog, Button commitButton, Button rollbackButton) {
+    /*private void commitRollbackWindow(Stage dialog, Button commitButton, Button rollbackButton) {
         Scene dialogScene = new Scene(VBoxBuilder.create()
                 .children(new Text("Do you want to commit your changes?"), rollbackButton, commitButton)
                 .alignment(Pos.CENTER)
@@ -202,7 +224,7 @@ public class ButtonController extends GenericController {
                 .build());
         dialog.setScene(dialogScene);
         dialog.show();
-    }
+    }*/
 
     private void setRed(TextField textField) {
         ObservableList<String> styleClass = textField.getStyleClass();
@@ -260,6 +282,7 @@ public class ButtonController extends GenericController {
         dialog.initModality(Modality.WINDOW_MODAL);
         TextField separatorTextField = new TextField();
         separatorTextField.setText(DEFAULT_SEPARATOR);
+
         Button okButton = new Button("Ok");
         okButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -291,7 +314,7 @@ public class ButtonController extends GenericController {
 
         });
         Scene dialogScene = new Scene(VBoxBuilder.create()
-                .children(new Text("Provide separator (Default ;)"), separatorTextField, okButton, closeButton)
+                .children(new Text("Provide separator (default is ;)"), separatorTextField, okButton, closeButton)
                 .padding(new Insets(10))
                 .build());
         dialog.setScene(dialogScene);

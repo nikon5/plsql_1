@@ -48,4 +48,11 @@ public class ControllersConfiguration {
     public TableDataSaveProc getSaveTableDataProc() throws SQLException {
         return new TableDataSaveProc(dataSource);
     }
+
+    @Bean
+    public LoadDataFromFileToBackupTable loadDataFromFileToBackupTable () throws SQLException {
+        return new LoadDataFromFileToBackupTable(dataSource);
+    }
+
+
 }
