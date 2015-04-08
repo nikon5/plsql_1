@@ -54,5 +54,10 @@ public class ControllersConfiguration {
         return new LoadDataFromFileToBackupTable(dataSource);
     }
 
+    @Bean
+    public TableDataLoadFromBckp tableDataLoadFromBckp () throws SQLException {
+        return new TableDataLoadFromBckp(dataSource);
+    }
+
 
 }

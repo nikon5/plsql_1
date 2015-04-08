@@ -35,5 +35,6 @@
         <TextField disable="true" fx:id="insertTime" layoutX="524.0" layoutY="389.0" prefHeight="25.0" prefWidth="67.0" />
         <Button onAction="#onSaveDataToFileProc" layoutX="220.0" layoutY="416.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0" text="Save data to file proc" />
         <Button onAction="#onLoadDataFromFileToBackupTable" layoutX="221.0" layoutY="443.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0" text="Load data from file" />
+        <Button onAction="#onLoadDataFromBackupTable" layoutX="221.0" layoutY="467.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="375.0" text="Load data from bckp" />
     </children>
 </Pane>

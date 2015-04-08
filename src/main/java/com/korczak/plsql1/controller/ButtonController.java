@@ -143,7 +143,51 @@ public class ButtonController extends GenericController {
         dialog.setScene(dialogScene);
         dialog.show();
     }
+        public void onLoadDataFromBackupTable(Event e) {
+            TableDataLoadFromBckp procedure = applicationContext.getBean(TableDataLoadFromBckp.class);
+            final Stage dialog = new Stage();
+            dialog.initModality(Modality.WINDOW_MODAL);
+            TextField commitField = new TextField();
+            commitField.setText("20");
 
+            Button closeButton = new Button("Close");
+            closeButton.setOnAction(new EventHandler<ActionEvent>() {
+
+                @Override
+                public void handle(ActionEvent arg0) {
+                    dialog.close();
+                }
+
+            });
+            Button okButton = new Button("Ok");
+            okButton.setOnAction(new EventHandler<ActionEvent>() {
+
+                public static final String FILE_DIR = "OUTPUT_DIR";
+
+                @Override
+                public void handle(ActionEvent arg0) {
+                    BigDecimal numberOfInserts = BigDecimal.ZERO;
+                    if(commitField.getText().length()>0){
+                        try {
+                            procedure.execute(selectedTableName, Integer.parseInt(commitField.getText()), numberOfInserts);
+                        } catch (NumberFormatException ex) {
+                            commitField.setText("20");
+                            procedure.execute(selectedTableName, 20, numberOfInserts);
+                        }
+                    }
+                    System.out.println(numberOfInserts);
+                    dialog.close();
+                }
+
+            });
+
+            Scene dialogScene = new Scene(VBoxBuilder.create()
+                    .children(/*new Text("Size of commit"), sizeOfCommit,*/ new Text("Provide commit occurence"), commitField, okButton, closeButton)
+                    .padding(new Insets(14))
+                    .build());
+            dialog.setScene(dialogScene);
+            dialog.show();
+        }
     public void onLoadDataFromFileToBackupTable(Event e) {
         LoadDataFromFileToBackupTable procedure = applicationContext.getBean(LoadDataFromFileToBackupTable.class);
         loadDataToFileName = null;
