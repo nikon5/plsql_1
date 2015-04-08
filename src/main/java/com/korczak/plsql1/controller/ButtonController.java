@@ -170,6 +170,15 @@ public class ButtonController extends GenericController {
             }
 
         });
+        Button closeButton = new Button("Close");
+        closeButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent arg0) {
+                dialog.close();
+            }
+
+        });
         Button okButton = new Button("Ok");
         okButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -183,6 +192,12 @@ public class ButtonController extends GenericController {
                     //skaswany plik(nie wybrany żaden), wybrana tabela oryginalna(nie ma _bckp w nazwie),
                     System.out.println("//TODO: RODZYN NAWYWIJAŁ - SKASOWAŁ PLIK ALBO INNE KWIATY! ERROR WINDOW !");
                     dialog.close();
+                    Scene dialogScene = new Scene(VBoxBuilder.create()
+                            .children(/*new Text("Size of commit"), sizeOfCommit,*/ new Text("Skasowany plik(nie wybrany żaden), \n wybrana tabela oryginalna(nie ma _bckp w nazwie)"),closeButton)
+                            .padding(new Insets(14))
+                            .build());
+                    dialog.setScene(dialogScene);
+                    dialog.show();
                     return;
                 }
 
@@ -193,16 +208,6 @@ public class ButtonController extends GenericController {
                     }
                     numberOfInserts = procedure.execute(FILE_DIR, loadDataToFileName.getName(), selectedTableName, separator);
                     System.out.println(numberOfInserts);
-                dialog.close();
-            }
-
-        });
-
-        Button closeButton = new Button("Close");
-        closeButton.setOnAction(new EventHandler<ActionEvent>() {
-
-            @Override
-            public void handle(ActionEvent arg0) {
                 dialog.close();
             }
 
