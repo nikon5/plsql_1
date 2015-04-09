@@ -349,7 +349,10 @@ PROCEDURE save_data_to_file(table_name IN VARCHAR2, separator IN VARCHAR2)
   CURSOR regions_row IS SELECT /*region_id,*/ region_name from regions order by region_id;
 
   BEGIN
+  IF LENGTH( separator )>1 or LENGTH(TRIM(TRANSLATE(separator, '@/\abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+-.0123456789', ' '))) is  null then
 
+  dbms_output.put_line('blad');
+  ELSE
   IF lower(table_name) = 'countries' THEN
     fHandle := UTL_FILE.FOPEN('OUTPUT_DIR', table_name||'.txt', 'w');
     OPEN countries_row;
@@ -441,6 +444,7 @@ PROCEDURE save_data_to_file(table_name IN VARCHAR2, separator IN VARCHAR2)
   ELSE
     DBMS_OUTPUT.PUT_LINE('There is no such table.');
   END IF;
+    end if;
   END;
 --******************************************************************************************
 

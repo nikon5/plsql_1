@@ -185,8 +185,13 @@ public class ButtonController extends GenericController {
                         try {
                            numberOfInserts =  procedure.execute(selectedTableName, Integer.parseInt(commitField.getText()));
                         } catch (NumberFormatException ex) {
-                            commitField.setText("20");
-//                            procedure.execute(selectedTableName, 20, numberOfInserts);
+                            Scene dialogScene = new Scene(VBoxBuilder.create()
+                                    .children(new Text("Rodzynku,\n" +
+                                            "Wpisałeś wartość, która nie jest liczbą."), closeButton)
+                                    .padding(new Insets(14))
+                                    .build());
+                            dialog.setScene(dialogScene);
+                            dialog.show();
                         }
                     }
                     System.out.println(numberOfInserts);
