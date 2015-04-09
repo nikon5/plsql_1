@@ -22,19 +22,18 @@ public class TableDataLoadFromBckp extends StoredProcedure {
         compile();
     }
 
-    public BigDecimal execute(String tableName, String commit_occurence) {
-        Map<String, String> inputParams = new HashMap();
+    public BigDecimal execute(String tableName, Integer commit_occurence) {
+        Map<String, Object> inputParams = new HashMap();
         inputParams.put("table_name", tableName);
         inputParams.put("commit_occurence", commit_occurence);
 
         Map<String, Object> outputParams = execute(inputParams);
         if (!outputParams.isEmpty()) {
-            Object time_elapsed = outputParams.get("time_elapsed");
-            if (time_elapsed instanceof BigDecimal) {
-                return (BigDecimal) time_elapsed;
+            Object totalInserted =  outputParams.get("total_inserted");
+            if (totalInserted instanceof BigDecimal) {
+                return (BigDecimal) totalInserted;
             }
         }
         return null;
     }
-
 }

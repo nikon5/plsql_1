@@ -143,6 +143,7 @@ public class ButtonController extends GenericController {
         dialog.setScene(dialogScene);
         dialog.show();
     }
+
         public void onLoadDataFromBackupTable(Event e) {
             TableDataLoadFromBckp procedure = applicationContext.getBean(TableDataLoadFromBckp.class);
             final Stage dialog = new Stage();
@@ -166,13 +167,26 @@ public class ButtonController extends GenericController {
 
                 @Override
                 public void handle(ActionEvent arg0) {
+
+                    if(selectedTableName.toUpperCase().contains("_BCKP")){
+                        dialog.close();
+                        Scene dialogScene = new Scene(VBoxBuilder.create()
+                                .children(new Text("Rodzynku,\n" +
+                                        "Wybrałeś tabelę backup'ową (powinieneś 'oryginalną', bo do niej chcesz wczytać dane)."), closeButton)
+                                .padding(new Insets(14))
+                                .build());
+                        dialog.setScene(dialogScene);
+                        dialog.show();
+                        return;
+                    }
+
                     BigDecimal numberOfInserts = BigDecimal.ZERO;
-                    if(commitField.getText().length()>0){
+                    if(commitField.getText().length() > 0){
                         try {
-                            procedure.execute(selectedTableName, Integer.parseInt(commitField.getText()), numberOfInserts);
+                           numberOfInserts =  procedure.execute(selectedTableName, Integer.parseInt(commitField.getText()));
                         } catch (NumberFormatException ex) {
                             commitField.setText("20");
-                            procedure.execute(selectedTableName, 20, numberOfInserts);
+//                            procedure.execute(selectedTableName, 20, numberOfInserts);
                         }
                     }
                     System.out.println(numberOfInserts);
@@ -182,18 +196,18 @@ public class ButtonController extends GenericController {
             });
 
             Scene dialogScene = new Scene(VBoxBuilder.create()
-                    .children(/*new Text("Size of commit"), sizeOfCommit,*/ new Text("Provide commit occurence"), commitField, okButton, closeButton)
+                    .children(new Text("Provide commit occurence"), commitField, okButton, closeButton)
                     .padding(new Insets(14))
                     .build());
             dialog.setScene(dialogScene);
             dialog.show();
         }
+
     public void onLoadDataFromFileToBackupTable(Event e) {
         LoadDataFromFileToBackupTable procedure = applicationContext.getBean(LoadDataFromFileToBackupTable.class);
         loadDataToFileName = null;
         final Stage dialog = new Stage();
         dialog.initModality(Modality.WINDOW_MODAL);
-//        TextField sizeOfCommit = new TextField();
         TextField separatorField = new TextField();
         separatorField.setText(DEFAULT_SEPARATOR);
 
@@ -233,11 +247,10 @@ public class ButtonController extends GenericController {
 
                 String trimmedFileName = loadDataToFileName.getName().split("\\.")[0];
                 if (loadDataToFileName != null && !selectedTableName.toUpperCase().equals(trimmedFileName.toUpperCase() + "_BCKP")) {
-                    //skaswany plik(nie wybrany żaden), wybrana tabela oryginalna(nie ma _bckp w nazwie),
-                    System.out.println("//TODO: RODZYN NAWYWIJAŁ - SKASOWAŁ PLIK ALBO INNE KWIATY! ERROR WINDOW !");
                     dialog.close();
                     Scene dialogScene = new Scene(VBoxBuilder.create()
-                            .children(/*new Text("Size of commit"), sizeOfCommit,*/ new Text("Skasowany plik(nie wybrany żaden), \n wybrana tabela oryginalna(nie ma _bckp w nazwie)"),closeButton)
+                            .children(new Text("Rodzynku,\nSkasowałeś plik z danymi, tudzież nie wybrałeś żadnego, " +
+                                    "\n ewentualnie wybrałeś tabelę oryginalną (nie backup'ową)."), closeButton)
                             .padding(new Insets(14))
                             .build());
                     dialog.setScene(dialogScene);
