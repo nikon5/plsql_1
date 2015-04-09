@@ -561,173 +561,196 @@ END;
 
 2.c.
   PROCEDURE load_data(table_name IN VARCHAR2, commit_occurence IN NUMBER, total_inserted OUT NUMBER)
-  IS
-  counter NUMBER := 0;
-  do_rollback BOOLEAN := FALSE;
-  BEGIN
-  IF lower(table_name)= 'countries' THEN
-    FOR item IN (SELECT * FROM countries_bckp ORDER BY country_id)
-    LOOP
-     <<inner>>
-  BEGIN
-      INSERT INTO countries VALUES (toVarchar(item.country_id), toVarchar(item.country_name), toNumber(item.region_id));
+    IS
+    counter NUMBER := 0;
+    do_rollback BOOLEAN := FALSE;
+    BEGIN
+    IF lower(table_name)= 'countries' THEN
+      FOR item IN (SELECT * FROM countries_bckp ORDER BY country_id)
+      LOOP
+       <<inner>>
+    BEGIN
+        INSERT INTO countries VALUES (toNumber(item.country_id), toVarchar(item.country_name), toNumber(item.region_id));
 
-        IF MOD(counter, commit_occurence) = 0 AND (NOT do_rollback) THEN
-          counter := counter + commit_occurence;
-          do_rollback := FALSE;
-          COMMIT;
-        ELSIF MOD(counter, commit_occurence) = 0 THEN
-          do_rollback := FALSE;
-          ROLLBACK;
-        END IF;
-                EXCEPTION
-          WHEN OTHERS THEN
-          BEGIN
-            do_rollback := TRUE;
-            CONTINUE;
-          END;
-  end inner;
-    END LOOP;
-  ELSIF lower(table_name)= 'departments' THEN
-    FOR item IN (SELECT * FROM departments_bckp ORDER BY department_id)
-    LOOP
-         <<inner>>
-  BEGIN
-      INSERT INTO departments VALUES (toNumber(item.department_id), toVarchar(item.department_name), toNumber(item.manager_id), toNumber(item.location_id));
-              IF MOD(counter, commit_occurence) = 0 AND (NOT do_rollback) THEN
-          counter := counter + commit_occurence;
-          do_rollback := FALSE;
-          COMMIT;
-        ELSIF MOD(counter, commit_occurence) = 0 THEN
-          do_rollback := FALSE;
-          ROLLBACK;
-        END IF;
-        EXCEPTION
-          WHEN OTHERS THEN
-          BEGIN
-            do_rollback := TRUE;
-            CONTINUE;
-          END;
+          IF MOD(counter, commit_occurence) = 0 AND (NOT do_rollback) THEN
+            counter := counter + commit_occurence;
+            do_rollback := FALSE;
+            COMMIT;
+          ELSIF MOD(counter, commit_occurence) = 0 THEN
+            do_rollback := FALSE;
+            ROLLBACK;
+          END IF;
+                  EXCEPTION
+            WHEN OTHERS THEN
+            BEGIN
+              do_rollback := TRUE;
+              CONTINUE;
+            END;
+    end inner;
+      END LOOP;
+    ELSIF lower(table_name)= 'departments' THEN
+      FOR item IN (SELECT * FROM departments_bckp ORDER BY department_id)
+      LOOP
+           <<inner>>
+    BEGIN
+        INSERT INTO departments VALUES (toNumber(item.department_id), toVarchar(item.department_name), toNumber(item.manager_id), toNumber(item.location_id));
+                IF MOD(counter, commit_occurence) = 0 AND (NOT do_rollback) THEN
+            counter := counter + commit_occurence;
+            do_rollback := FALSE;
+            COMMIT;
+          ELSIF MOD(counter, commit_occurence) = 0 THEN
+            do_rollback := FALSE;
+            ROLLBACK;
+          END IF;
+          EXCEPTION
+            WHEN OTHERS THEN
+            BEGIN
+              do_rollback := TRUE;
+              CONTINUE;
+            END;
+              END inner;
+      END LOOP;
+
+   ELSIF lower(table_name)= 'employees' THEN
+      FOR item IN (SELECT * FROM employees_bckp ORDER BY employee_id)
+      LOOP
+           <<inner>>
+    BEGIN
+        INSERT INTO employees VALUES (toNumber(item.employee_id), toVarchar(item.first_name), toVarchar(item.last_name), toVarchar(item.email), toVarchar(item.phone_number),
+                          toDate(item.hire_date), toVarchar(item.job_id), toNumber(item.salary), toNumber(item.commission_pct), toNumber(item.manager_id), toNumber(item.department_id));
+                IF MOD(counter, commit_occurence) = 0 AND (NOT do_rollback) THEN
+            counter := counter + commit_occurence;
+            do_rollback := FALSE;
+            COMMIT;
+          ELSIF MOD(counter, commit_occurence) = 0 THEN
+            do_rollback := FALSE;
+            ROLLBACK;
+          END IF;
+          EXCEPTION
+            WHEN OTHERS THEN
+            BEGIN
+              do_rollback := TRUE;
+              CONTINUE;
+            END;
             END inner;
-    END LOOP;
+      END LOOP;
 
- ELSIF lower(table_name)= 'employees' THEN
-    FOR item IN (SELECT * FROM employees_bckp ORDER BY employee_id)
-    LOOP
-         <<inner>>
-  BEGIN
-      INSERT INTO employees VALUES (toNumber(item.employee_id), toVarchar(item.first_name), toVarchar(item.last_name), toVarchar(item.email), toVarchar(item.phone_number),
-                        toDate(item.hire_date), toVarchar(item.job_id), toNumber(item.salary), toNumber(item.commission_pct), toNumber(item.manager_id), toNumber(item.department_id));
-              IF MOD(counter, commit_occurence) = 0 AND (NOT do_rollback) THEN
-          counter := counter + commit_occurence;
-          do_rollback := FALSE;
-          COMMIT;
-        ELSIF MOD(counter, commit_occurence) = 0 THEN
-          do_rollback := FALSE;
-          ROLLBACK;
-        END IF;
-        EXCEPTION
-          WHEN OTHERS THEN
+   ELSIF lower(table_name)= 'job_history' THEN
+      FOR item IN (SELECT * FROM job_history_bckp ORDER BY employee_id)
+      LOOP
+           <<inner>>
+    BEGIN
+        INSERT INTO job_history VALUES (toNumber(item.employee_id), toDate(item.start_date), toDate(item.end_date), toVarchar(item.job_id), toNumber(item.department_id));
+                IF MOD(counter, commit_occurence) = 0 AND (NOT do_rollback) THEN
+            counter := counter + commit_occurence;
+            do_rollback := FALSE;
+            COMMIT;
+          ELSIF MOD(counter, commit_occurence) = 0 THEN
+            do_rollback := FALSE;
+            ROLLBACK;
+          END IF;
+          EXCEPTION
+            WHEN OTHERS THEN
+            BEGIN
+              do_rollback := TRUE;
+              CONTINUE;
+            END;
+            END inner;
+      END LOOP;
+        ELSIF lower(table_name)= 'jobs' THEN
+      FOR item IN (SELECT * FROM jobs_bckp ORDER BY job_id)
+      LOOP
+           <<inner>>
+    BEGIN
+        INSERT INTO jobs VALUES (toVarchar(item.job_id), toVarchar(item.job_title), toNumber(item.min_salary), toNumber(item.max_salary));
+                IF MOD(counter, commit_occurence) = 0 AND (NOT do_rollback) THEN
+            counter := counter + commit_occurence;
+            do_rollback := FALSE;
+            COMMIT;
+          ELSIF MOD(counter, commit_occurence) = 0 THEN
+            do_rollback := FALSE;
+            ROLLBACK;
+          END IF;
+          EXCEPTION
+            WHEN OTHERS THEN
+            BEGIN
+              do_rollback := TRUE;
+              CONTINUE;
+            END;
+            END inner;
+      END LOOP;
+
+    ELSIF lower(table_name)= 'locations' THEN
+      FOR item IN (SELECT * FROM locations_bckp ORDER BY location_id)
+      LOOP
+           <<inner>>
+    BEGIN
+        INSERT INTO locations VALUES (toNumber(item.location_id), toVarchar(item.street_address), toVarchar(item.postal_code), toVarchar(item.city), toVarchar(item.state_province), toVarchar(item.country_id));
+                IF MOD(counter, commit_occurence) = 0 AND (NOT do_rollback) THEN
+            counter := counter + commit_occurence;
+            do_rollback := FALSE;
+            COMMIT;
+          ELSIF MOD(counter, commit_occurence) = 0 THEN
+            do_rollback := FALSE;
+            ROLLBACK;
+          END IF;
+          EXCEPTION
+            WHEN OTHERS THEN
+            BEGIN
+              do_rollback := TRUE;
+              CONTINUE;
+            END;
+            END inner;
+      END LOOP;
+
+      ELSIF lower(table_name)= 'regions' THEN
+      FOR item IN (SELECT * FROM regions_bckp ORDER BY region_id)
+      LOOP
+
+    <<inner>>
+    BEGIN
+        INSERT INTO regions VALUES ( toNumber(item.region_id), toVarchar(item.region_name) );
+          IF MOD(counter, commit_occurence) = 0 AND (NOT do_rollback) THEN
+            counter := counter + commit_occurence;
+            do_rollback := FALSE;
+            COMMIT;
+          ELSIF MOD(counter, commit_occurence) = 0 THEN
+            do_rollback := FALSE;
+            ROLLBACK;
+          END IF;
+    EXCEPTION WHEN OTHERS THEN
           BEGIN
             do_rollback := TRUE;
             CONTINUE;
           END;
-          END inner;
-    END LOOP;
+    END inner;
+      END LOOP;
 
- ELSIF lower(table_name)= 'employees' THEN
-    FOR item IN (SELECT * FROM job_history_bckp ORDER BY employee_id)
-    LOOP
-         <<inner>>
-  BEGIN
-      INSERT INTO job_history VALUES (toNumber(item.employee_id), toDate(item.start_date), toDate(item.end_date), toVarchar(item.job_id), toNumber(item.department_id));
-              IF MOD(counter, commit_occurence) = 0 AND (NOT do_rollback) THEN
-          counter := counter + commit_occurence;
-          do_rollback := FALSE;
-          COMMIT;
-        ELSIF MOD(counter, commit_occurence) = 0 THEN
-          do_rollback := FALSE;
-          ROLLBACK;
-        END IF;
-        EXCEPTION
-          WHEN OTHERS THEN
-          BEGIN
-            do_rollback := TRUE;
-            CONTINUE;
-          END;
-          END inner;
-    END LOOP;
-      ELSIF lower(table_name)= 'jobs' THEN
-    FOR item IN (SELECT * FROM jobs_bckp ORDER BY job_id)
-    LOOP
-         <<inner>>
-  BEGIN
-      INSERT INTO jobs VALUES (toVarchar(item.job_id), toVarchar(item.job_title), toNumber(item.min_salary), toNumber(item.max_salary));
-              IF MOD(counter, commit_occurence) = 0 AND (NOT do_rollback) THEN
-          counter := counter + commit_occurence;
-          do_rollback := FALSE;
-          COMMIT;
-        ELSIF MOD(counter, commit_occurence) = 0 THEN
-          do_rollback := FALSE;
-          ROLLBACK;
-        END IF;
-        EXCEPTION
-          WHEN OTHERS THEN
-          BEGIN
-            do_rollback := TRUE;
-            CONTINUE;
-          END;
-          END inner;
-    END LOOP;
+    ELSE
+    DBMS_OUTPUT.PUT_LINE(' NO TABLE MATCHED! ');
+    END IF;
 
-  ELSIF lower(table_name)= 'employees' THEN
-    FOR item IN (SELECT * FROM locations_bckp ORDER BY location_id)
-    LOOP
-         <<inner>>
-  BEGIN
-      INSERT INTO locations VALUES (toNumber(item.location_id), toVarchar(item.street_address), toVarchar(item.postal_code), toVarchar(item.city), toVarchar(item.state_province), toVarchar(item.country_id));
-              IF MOD(counter, commit_occurence) = 0 AND (NOT do_rollback) THEN
-          counter := counter + commit_occurence;
-          do_rollback := FALSE;
-          COMMIT;
-        ELSIF MOD(counter, commit_occurence) = 0 THEN
-          do_rollback := FALSE;
-          ROLLBACK;
-        END IF;
-        EXCEPTION
-          WHEN OTHERS THEN
-          BEGIN
-            do_rollback := TRUE;
-            CONTINUE;
-          END;
-          END inner;
-    END LOOP;
-  ELSE
-  DBMS_OUTPUT.PUT_LINE(' NO TABLE MATCHED! ');
-  END IF;
-
-  total_inserted := counter;
-  END load_data;
-
+    total_inserted := counter;
+    END load_data;
 
   -- TRIES TO CAST A VARCHAR TO NUMBER
-  FUNCTION toNumber(probablyNumber VARCHAR2) RETURN NUMBER
-  IS
-  BEGIN
-    RETURN TO_NUMBER(probablyNumber);
-  END;
+    FUNCTION toNumber(probablyNumber VARCHAR2) RETURN NUMBER
+    IS
+    BEGIN
+      RETURN TO_NUMBER(probablyNumber);
+    END;
 
-  -- TRIES TO CAST A VARCHAR TO DATE
-  FUNCTION toDate(probablyDate VARCHAR2) RETURN DATE
-  IS
-  BEGIN
-    RETURN TO_DATE(probablyDate);
-  END;
+    -- TRIES TO CAST A VARCHAR TO DATE
+    FUNCTION toDate(probablyDate VARCHAR2) RETURN DATE
+    IS
+    BEGIN
+      RETURN TO_DATE(probablyDate);
+    END;
 
-  -- TRIES TO CAST A VARCHAR TO VARCHAR
-  FUNCTION toVarchar(probablyVarchar VARCHAR2) RETURN VARCHAR2
-  IS
-  BEGIN
-    RETURN TO_CHAR(probablyVarchar);
-  END;
+    -- TRIES TO CAST A VARCHAR TO VARCHAR
+    FUNCTION toVarchar(probablyVarchar VARCHAR2) RETURN VARCHAR2
+    IS
+    BEGIN
+      RETURN TO_CHAR(probablyVarchar);
+    END;
   end pkg_kd_kp_file;
