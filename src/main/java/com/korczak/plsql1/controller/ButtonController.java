@@ -112,21 +112,7 @@ public class ButtonController extends GenericController {
         dialog.initModality(Modality.WINDOW_MODAL);
         TextField separatorTextField = new TextField();
         separatorTextField.setText(DEFAULT_SEPARATOR);
-        Button okButton = new Button("Ok");
-        okButton.setOnAction(new EventHandler<ActionEvent>() {
 
-            @Override
-            public void handle(ActionEvent arg0) {
-                if (!separatorTextField.getText().isEmpty()) {
-
-                    procedure.execute(selectedTableName, separatorTextField.getText());
-                } else {
-                    procedure.execute(selectedTableName, DEFAULT_SEPARATOR);
-                }
-                dialog.close();
-            }
-
-        });
         Button closeButton = new Button("Close");
         closeButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -136,6 +122,47 @@ public class ButtonController extends GenericController {
             }
 
         });
+
+        Button okButton = new Button("Ok");
+        okButton.setOnAction(new EventHandler<ActionEvent>() {
+
+            @Override
+            public void handle(ActionEvent arg0) {
+
+                if(selectedTableName.contains("_BCKP")){
+                    dialog.close();
+                    Scene dialogScene = new Scene(VBoxBuilder.create()
+                            .children(new Text("Rodzynku,\n Wybierz tabele oryginalna, aby zapisac dane do pliku."), closeButton)
+                            .padding(new Insets(14))
+                            .build());
+                    dialog.setScene(dialogScene);
+                    dialog.show();
+                    return;
+                }
+
+
+                String separator = separatorTextField.getText();
+                if( separator.length() > 1 || separator.isEmpty() || separator.matches("[^,;#$&+]")) {
+                    dialog.close();
+                    Scene dialogScene = new Scene(VBoxBuilder.create()
+                            .children(new Text("Rodzynku,\n Sugerujemy wybrać inny separator. Np. , ; # $ & + "), closeButton)
+                            .padding(new Insets(14))
+                            .build());
+                    dialog.setScene(dialogScene);
+                    dialog.show();
+                    return;
+                }
+
+                if (!separatorTextField.getText().isEmpty()) {
+                    procedure.execute(selectedTableName, separatorTextField.getText());
+                } else {
+                    procedure.execute(selectedTableName, DEFAULT_SEPARATOR);
+                }
+                dialog.close();
+            }
+
+        });
+
         Scene dialogScene = new Scene(VBoxBuilder.create()
                 .children(new Text("Provide a separator (default is ; )"), separatorTextField, okButton, closeButton)
                 .padding(new Insets(10))
